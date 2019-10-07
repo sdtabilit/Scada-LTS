@@ -21,8 +21,10 @@
 
 <script type="text/javascript">
   dojo.addOnLoad(function() {
-      if (dataTypeId == <%= DataTypes.NUMERIC %>)
+    if (dataTypeId == <%= DataTypes.NUMERIC %>) {
           show("engineeringUnitsSection");
+          show("scalingSection");
+      }
       if (dataTypeId == <%= DataTypes.BINARY %>)
                 show("parseErrorValueField");
   });
@@ -73,6 +75,24 @@
           <c:if test="${error.engineeringUnits != null}"><td class="formError"><fmt:message key="${error.engineeringUnits}"/></td></c:if>
         </tr>
       </spring:bind>
+    </tbody>
+
+    <tbody id="scalingSection" style="display:none;">
+	    <tr>
+	      <td class="formLabelRequired"><fmt:message key="pointEdit.logging.scaling"/></td>
+	      <td class="formField">
+	        <fmt:message key="pointEdit.logging.scaling.rawZero"/> <input id="scalingRawZero" type="text" name="scalingRawZero" value="${form.scalingRawZero}" class="formShort"/> 
+	        <fmt:message key="pointEdit.logging.scaling.rawFull"/> <input id="scalingRawFull" type="text" name="scalingRawFull" value="${form.scalingRawFull}" class="formShort"/> 
+	        <fmt:message key="pointEdit.logging.scaling.engineeringZero"/> <input id="scalingEngineeringZero" type="text" name="scalingEngineeringZero" value="${form.scalingEngineeringZero}" class="formShort"/> 
+	        <fmt:message key="pointEdit.logging.scaling.engineeringFull"/> <input id="scalingEngineeringFull" type="text" name="scalingEngineeringFull" value="${form.scalingEngineeringFull}" class="formShort"/>
+	      </td>
+	      <td class="formError">
+	        <spring:bind path="form.purgeType">
+	          <c:if test="${error.purgeType != null}"><td class="formError"><fmt:message key="${error.purgeType}"/></td><br/></c:if>
+	        </spring:bind>
+	        <spring:bind path="form.purgePeriod"><c:if test="${error.purgePeriod != null}"><td class="formError"><fmt:message key="${error.purgePeriod}"/></td></c:if></spring:bind>
+	      </td>
+	    </tr>
     </tbody>
     
   </table>

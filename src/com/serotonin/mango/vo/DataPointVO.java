@@ -164,6 +164,15 @@ public class DataPointVO implements Serializable, Cloneable, JsonSerializable, C
     @JsonRemoteProperty
     private String parseErrorValue = "0";
 
+    @JsonRemoteProperty
+    private double scalingRawZero = 0;
+    @JsonRemoteProperty
+    private double scalingRawFull = 0;
+    @JsonRemoteProperty
+    private double scalingEngineeringZero = 0;
+    @JsonRemoteProperty
+    private double scalingEngineeringFull = 0;
+    
     private PointLocatorVO pointLocator;
 
     //
@@ -526,7 +535,39 @@ public class DataPointVO implements Serializable, Cloneable, JsonSerializable, C
         this.parseErrorValue = parseErrorValue;
     }
 
-    public DataPointVO copy() {
+    public double getScalingRawZero() {
+		return scalingRawZero;
+	}
+
+	public void setScalingRawZero(double scalingRawZero) {
+		this.scalingRawZero = scalingRawZero;
+	}
+
+	public double getScalingRawFull() {
+		return scalingRawFull;
+	}
+
+	public void setScalingRawFull(double scalingRawFull) {
+		this.scalingRawFull = scalingRawFull;
+	}
+
+	public double getScalingEngineeringZero() {
+		return scalingEngineeringZero;
+	}
+
+	public void setScalingEngineeringZero(double scalingEngineeringZero) {
+		this.scalingEngineeringZero = scalingEngineeringZero;
+	}
+
+	public double getScalingEngineeringFull() {
+		return scalingEngineeringFull;
+	}
+
+	public void setScalingEngineeringFull(double scalingEngineeringFull) {
+		this.scalingEngineeringFull = scalingEngineeringFull;
+	}
+
+	public DataPointVO copy() {
         try {
             return (DataPointVO) super.clone();
         }
@@ -614,7 +655,7 @@ public class DataPointVO implements Serializable, Cloneable, JsonSerializable, C
     //
     // Serialization
     //
-    private static final int version = 9;
+    private static final int version = 10;
 
     private void writeObject(ObjectOutputStream out) throws IOException {
         out.writeInt(version);
@@ -636,9 +677,13 @@ public class DataPointVO implements Serializable, Cloneable, JsonSerializable, C
         out.writeBoolean(discardExtremeValues);
         out.writeDouble(discardLowLimit);
         out.writeDouble(discardHighLimit);
-        out.writeInt(engineeringUnits);
+        out.writeInt(engineeringUnits);                        
         SerializationHelper.writeSafeUTF(out, chartColour);
         SerializationHelper.writeSafeUTF(out, parseErrorValue);
+        out.writeDouble(scalingRawZero);
+        out.writeDouble(scalingRawFull);
+        out.writeDouble(scalingEngineeringZero);
+        out.writeDouble(scalingEngineeringFull);
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -854,6 +899,32 @@ public class DataPointVO implements Serializable, Cloneable, JsonSerializable, C
             engineeringUnits = in.readInt();
             chartColour = SerializationHelper.readSafeUTF(in);
             parseErrorValue = SerializationHelper.readSafeUTF(in);
+        } else if (ver == 10) {
+            name = SerializationHelper.readSafeUTF(in);
+            deviceName = SerializationHelper.readSafeUTF(in);
+            enabled = in.readBoolean();
+            pointFolderId = in.readInt();
+            loggingType = in.readInt();
+            intervalLoggingPeriodType = in.readInt();
+            intervalLoggingPeriod = in.readInt();
+            intervalLoggingType = in.readInt();
+            tolerance = in.readDouble();
+            purgeType = in.readInt();
+            purgePeriod = in.readInt();
+            textRenderer = (TextRenderer) in.readObject();
+            chartRenderer = (ChartRenderer) in.readObject();
+            pointLocator = (PointLocatorVO) in.readObject();
+            defaultCacheSize = in.readInt();
+            discardExtremeValues = in.readBoolean();
+            discardLowLimit = in.readDouble();
+            discardHighLimit = in.readDouble();
+            engineeringUnits = in.readInt();
+            chartColour = SerializationHelper.readSafeUTF(in);
+            parseErrorValue = SerializationHelper.readSafeUTF(in);
+            scalingRawZero = in.readDouble();
+            scalingRawFull = in.readDouble();
+            scalingEngineeringZero = in.readDouble();
+            scalingEngineeringFull = in.readDouble();
         }
 
         // Check the purge type. Weird how this could have been set to 0.

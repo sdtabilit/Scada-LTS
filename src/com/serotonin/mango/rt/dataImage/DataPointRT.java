@@ -203,6 +203,22 @@ public class DataPointRT implements IDataPoint, ILifecycle, TimeoutClient {
 				return;
 		}
 
+		// Perform scaling where applicable
+		// Scaling formula:
+		// [ (Raw - Raw Zero) * [ (Engineering Full - Engineering Zero) / (Raw Full -
+		// Raw Zero) ] ] + Engineering Zero
+
+		if (DataTypes.getDataType(newValue.getValue()) == DataTypes.NUMERIC
+				&& (vo.getScalingRawZero() != vo.getScalingEngineeringZero()
+						|| vo.getScalingRawFull() != vo.getScalingEngineeringFull())) {
+			double newd = newValue.getDoubleValue();
+			double scaledD = ((newd - vo.getScalingRawZero()) / (vo.getScalingRawFull() - vo.getScalingRawZero()))
+					* (vo.getScalingEngineeringFull() - vo.getScalingEngineeringZero())
+					+ vo.getScalingEngineeringZero();
+
+			newValue = new PointValueTime(scaledD, newValue.getTime());
+		}
+
 		if (newValue.getTime() > System.currentTimeMillis()
 				+ SystemSettingsDAO.getFutureDateLimit()) {
 			// Too far future dated. Toss it. But log a message first.
