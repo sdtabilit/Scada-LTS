@@ -4,6 +4,7 @@ import com.serotonin.mango.vo.DataPointVO;
 import com.serotonin.mango.vo.User;
 import org.junit.Assert;
 import org.junit.Test;
+import org.scada_lts.cache.PointValueCache;
 
 public class PointValueFacadeTest {
 
@@ -26,7 +27,7 @@ public class PointValueFacadeTest {
         source.setUsername(GIVEN_USERNAME);
         PointValueTime pvt = new PointValueTime(true, new Long(5));
         pointValueCache.setMaxSize(10);
-        pointValueCache.savePointValueIntoDaoAndCacheUpdate(pvt,source,Boolean.FALSE,Boolean.FALSE);
+        pointValueCache.savePointValueIntoCacheAndIflogValueIntoDbAsyncOrSync(pvt,source,Boolean.FALSE,Boolean.FALSE);
         boolean sourceIsNotEmpty=Boolean.FALSE;
         for(PointValueTime pointValueTime:pointValueCache.getLatestPointValuesUsedForTest(2))
         {

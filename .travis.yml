@@ -10,7 +10,9 @@ before_script:
 - npm -v
 - node -v
 - env
+#- npm install -g @angular/cli@latest
 - npm install -g bower
+#- npm install @angular/core@latest
 - chmod +x ./get_seroUtils.sh
 - "./get_seroUtils.sh"
 - ls -l ./WebContent/WEB-INF/lib/seroUtils.jar
@@ -36,6 +38,10 @@ branches:
   - "/^siv/master.*$/"
   - "/^feature/-#1056ConcurrentModificationException_if_you_open_more_than_two_tabs.*$/"
   - "/^feature/#1009_History_of_pointvalue_No_annotation.*$/"
+  - "/^develop.*$/"
+  - "/^master.*$/"
+  - "/^feature/#1066_Siv_Develop_Copy_Result_Branche_Of_1048.*$/"
+  - "/^feature/#1096_Merge_1066_To_SivDevelop.*$/"
   - "/^feature_s/#1094_.*$/"
   - "/^feature_s/#1107_.*$/"
 notifications:
@@ -59,6 +65,8 @@ after_script:
 - mv ./apache-tomcat-7.0.85/* ./
 - rm -rf ./apache-tomcat-7.0.85
 - cp ../../ScadaBR.war ./webapps
+#- cp ../../ScadaLTS-UI/war/ScadaLTS.war ./webapps
+#- ls -l ./webapps/ScadaLTS.war
 - ls -l ./webapps/ScadaBR.war
 - cp ../../WebContent/WEB-INF/lib/mysql-connector-java-3.1.8-bin.jar ./lib/
 - cp ../../WebContent/WEB-INF/lib/mysql-connector-java-5.1.38-bin.jar ./lib/

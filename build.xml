@@ -259,9 +259,6 @@
 	</target>
 
 	<target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
-
-
-
 	<target name="war" description="Bundles the application as a WAR file" depends="clean, build, new-ui">
 
 		<property name="js-ui.dir"  value="WebContent/resources/js-ui"/>
@@ -291,6 +288,7 @@
 				<include name="app.css"/>
 				<include name="chunk-vendors.css"/>
 			</fileset>
+			<mapper type="glob" from="app.*.css" to="app.css"/>
 		</copy>
 
 		<copy includeemptydirs="false" todir="${js-ui.dir}/app/js" taskname="copy app.js">
@@ -298,6 +296,8 @@
 				<include name="app.js"/>
 				<include name="chunk-vendors.js"/>
 			</fileset>
+			<mapper type="glob" from="app.*.js" to="app.js"/>
+
 		</copy>
 
 		<!-- copy content for views -->
@@ -305,6 +305,7 @@
 			<fileset dir="${src-js-ui.dir}/css/">
 				<include name="cmp-component.css"/>
 			</fileset>
+			<mapper type="glob" from="vendor.*.js" to="vendor.js"/>
 		</copy>
 		<copy includeemptydirs="false" todir="${js-ui.dir}/views/js" taskname="copy for views js">
 			<fileset dir="${src-js-ui.dir}/js/">
@@ -333,6 +334,8 @@
 			<fileset dir="${src-js-ui.dir}/js/">
 				<include name="ph.js"/>
 			</fileset>
+			<mapper type="glob" from="app.*.js.map" to="app.js.map"/>
+
 		</copy>
 
 		<!-- font do zrobienia -->
