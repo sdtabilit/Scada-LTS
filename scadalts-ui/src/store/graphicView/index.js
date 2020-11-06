@@ -2,13 +2,15 @@
  * @author grzegorz.bylica@abilit.eu
  */
 
-import storeIsAlive from "./storeIsAlive"
+import storeIsAlive from './storeIsAlive'
 import storeHistoryCMP from './storeHisotryCMP'
+import storeRefreshViews from './storeRefreshViews'
 
 const gv = {
   modules: {
     storeIsAlive,
-    storeHistoryCMP
+    storeHistoryCMP,
+    storeRefreshViews
   },
   state: {
 

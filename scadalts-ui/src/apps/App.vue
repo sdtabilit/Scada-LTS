@@ -9,6 +9,7 @@
             <logo>Scada-LTS</logo>
             <a href="#/alarms" v-bind:class="{ active: $route.name=='alarms'}"><i><font-awesome-icon icon="bell" /></i><span>Alarms</span></a>
             <a href="#/historical-alarms" v-bind:class="{ active: $route.name=='historical-alarms'}"><i><font-awesome-icon icon="file-medical-alt"/></i><span>Historical Alarms</span></a>
+            <a v-if="isUserRoleAdmin" href="#/system-settings" v-bind:class="{ active: $route.name=='system-settings'}"><i><font-awesome-icon icon="cogs"/></i><span>{{$t('systemsettings.title')}}</span></a>
             <a href="#/about" v-bind:class="{ active: $route.name=='about'}"><i><font-awesome-icon icon="info"/></i><span>About</span></a>
             <a href="./watch_list.shtm" v-bind:class="{ active: $route.name=='watch_list'}"><i><font-awesome-icon icon="list-alt"/></i><span>Watch list</span></a>
         </div>
@@ -32,10 +33,24 @@
 </template>
 
 <script>
+    import store from '../store';
 
     export default {
         name: 'app',
         components: {
+        },
+        data() {
+            return {
+                isUserRoleAdmin: false,
+            }
+        },
+        mounted() {
+          this.getUserRole();  
+        },
+        methods: {
+            async getUserRole() {
+                this.isUserRoleAdmin = await store.dispatch("getUserRole")
+            }
         }
     }
 </script>

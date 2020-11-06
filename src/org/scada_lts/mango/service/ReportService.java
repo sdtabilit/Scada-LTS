@@ -98,6 +98,10 @@ public class ReportService implements MangoReport {
 
 	@Override
 	public void saveReport(ReportVO report) {
+		if(report.getDateRangeType() == ReportVO.DATE_RANGE_TYPE_RELATIVE) {
+			report.setFromNone(false);
+			report.setToNone(false);
+		}
 		if (report.getId() == Common.NEW_ID) {
 			report.setId(reportDAO.insert(report));
 		} else {
@@ -279,10 +283,10 @@ public class ReportService implements MangoReport {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
 				if (reportInstance.isFromInception()) {
-					reportInstance.setReportStartTime(rs.getLong(ReportInstanceDataDAO.COLUMN_NAME_D_TS));
+					reportInstance.setReportStartTime(rs.getLong(ReportInstanceDataDAO.COLUMN_NAME_D_TS_MIN));
 				}
 				if (reportInstance.isToNow()) {
-					reportInstance.setReportEndTime(rs.getLong(ReportInstanceDataDAO.COLUMN_NAME_D_TS));
+					reportInstance.setReportEndTime(rs.getLong(ReportInstanceDataDAO.COLUMN_NAME_D_TS_MAX));
 				}
 			}
 		});

@@ -25,11 +25,12 @@ import 'verte/dist/verte.css';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import {faCoffee, faTimes, faBars, faBell, faFileMedicalAlt, faInfo, faListAlt} from '@fortawesome/free-solid-svg-icons'
+import {faCoffee, faTimes, faBars, faBell, faFileMedicalAlt, faInfo, faListAlt, faCogs} from '@fortawesome/free-solid-svg-icons'
 import i18n from './i18n'
 import LiveAlarms from './components/graphical_views/AlarmsComponent'
+import RefreshView from "@/components/graphical_views/RefreshView"
 
-library.add(faCoffee, faTimes, faBars, faBell, faFileMedicalAlt, faInfo, faListAlt)
+library.add(faCoffee, faTimes, faBars, faBell, faFileMedicalAlt, faInfo, faListAlt, faCogs)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.component(Verte.name, Verte);
@@ -198,6 +199,18 @@ for (let x = 0; x < 10; x++) {
       })
     }).$mount(`#${chartId}`)
   }
+}
+
+if (window.document.getElementById('refresh-view') != undefined) {
+  new Vue({
+    store,
+    render: h => h(RefreshView, {
+      props: {
+        ptimeToCheckRefresh: window.document.getElementById('refresh-view').getAttribute('ptimeToCheckRefresh'),
+        pviewId: window.document.getElementById('refresh-view').getAttribute('pviewId')
+      }
+    })
+  }).$mount('#refresh-view')
 }
 
 if (window.document.getElementById('live-alarms') != undefined) {

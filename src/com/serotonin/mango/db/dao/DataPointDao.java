@@ -105,7 +105,9 @@ public class DataPointDao {
     	}
     	
     }
-
+    public DataPointVO getDataPointByXid(String xid){
+        return dataPointService.getDataPointByXid(xid);
+    }
     public DataPointVO getDataPoint(String xid) {
 //        DataPointVO dp = queryForObject(DATA_POINT_SELECT + " where dp.xid=?", new Object[] { xid },
 //                new DataPointRowMapper(), null);

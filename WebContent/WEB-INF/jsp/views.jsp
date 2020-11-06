@@ -280,6 +280,13 @@
 	</script>
 
 	<tag:displayView view="${currentView}" emptyMessageKey="views.noViews" />
+
+	<div
+	    id='refresh-view'
+	    ptimeToCheckRefresh=7000
+	    pviewId=${currentView.id}>
+	</div>
+
 </tag:page>
 <%@ include file="/WEB-INF/jsp/include/vue/vue-app.js.jsp"%>
 <%@ include file="/WEB-INF/jsp/include/vue/vue-view.js.jsp"%>

@@ -136,3 +136,10 @@ If you need support for deployment please contact us and find more information o
 ## Copyright and license
 
 Code released under [the GPL license](https://github.com/sdtabilit/Scada-LTS/blob/master-sdtabilit/LICENSE). 
+
+## SeroUtils library license
+
+Matthew Lohbihler <matthew@serotonin.ai> has granted us permission to use the SeroUtils.jar library for ScadaLTS team. ScadaLTS team can use the code seroUtils without limitation.
+
+Fragement with the correspondence of Grzegorz Bylica and Matthew Lohbihler:
+"(...) The good news is that you may hereby and without limitation use the seroUtils code as you like. (...)"

@@ -84,7 +84,7 @@ public class MangoContextListener implements ServletContextListener {
 	private final Log log = LogFactory.getLog(MangoContextListener.class);
 
 	public void contextInitialized(ServletContextEvent evt) {
-		log.info("Scada-LTS context starting");
+		log.info("Scada-LTS context starting at: " + Common.getStartupTime());
 		
 		// Get a handle on the context.
 		ServletContext ctx = evt.getServletContext();

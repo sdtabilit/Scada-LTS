@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--  Set system property: -->
+<!-- -Dlog4j2.contextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector -->
+<!-- to make all loggers asynchronous https://logging.apache.org/log4j/2.x/manual/async.html -->
+<Configuration>
+
+    <Appenders>
+
+        <Console name="STDOUT" target="SYSTEM_OUT">
+            <PatternLayout pattern="%-5p %d{ISO8601} (%C.%M:%L) - %m %n"/>
+        </Console>
+
+        <File name="LOG_FILE" filename="${env:CATALINA_HOME}/logs/mango.log">
+            <PatternLayout pattern="%-5p %d{ISO8601} (%C.%M:%L) - %m %n"/>
+        </File>
+
+        <File name="LOG_FILE_HISTORY" filename="${env:CATALINA_HOME}/logs/history.log">
+            <PatternLayout pattern="%-5p %d{ISO8601} (%C.%M:%L) - %m %n"/>
+        </File>
+
+        <File name="LOG_FILE_MODBUS" filename="${env:CATALINA_HOME}/logs/modbus.log" append="false">
+            <PatternLayout pattern="%-5p %d{ISO8601} (%C.%M:%L) - %m %n"/>
+        </File>
+
+        <File name="LOG_FILE_SCRIPTS" filename="${env:CATALINA_HOME}/logs/scripts.log" append="false">
+            <PatternLayout pattern="%-5p %d{ISO8601} (%C.%M:%L) - %m %n"/>
+        </File>
+
+        <File name="LOG_FILE_API" filename="${env:CATALINA_HOME}/logs/api.log" append="false">
+            <PatternLayout pattern="%-5p %d{ISO8601} (%C.%M:%L) - %m %n"/>
+        </File>
+
+        <File name="LOG_FILE_VIEW_HIERARCHY" filename="${env:CATALINA_HOME}/logs/viehierarchyservicelogfile.log" append="false">
+            <PatternLayout pattern="%-5p %d{ISO8601} (%C.%M:%L) - %m %n"/>
+        </File>
+
+        <File name="LOG_FILE_FLYWAY" filename="${env:CATALINA_HOME}/logs/flyway.log" append="false">
+            <PatternLayout pattern="%-5p %d{ISO8601} (%C.%M:%L) - %m %n"/>
+        </File>
+
+        <File name="LOG_FILE_SCADA-LTS_DAO" filename="${env:CATALINA_HOME}/logs/scadaLTSDAO.log" append="false">
+            <PatternLayout pattern="%-5p %d{ISO8601} (%C.%M:%L) - %m %n"/>
+        </File>
+
+        <File name="LOG_FILE_DAO" filename="${env:CATALINA_HOME}/logs/dao.log" append="false">
+            <PatternLayout pattern="%-5p %d{ISO8601} (%C.%M:%L) - %m %n"/>
+        </File>
+
+        <Async name="ASYNC">
+            <AppenderRef ref="LOG_FILE"/>
+        </Async>
+
+        <Async name="ASYNC_MODBUS">
+            <AppenderRef ref="LOG_FILE_MODBUS"/>
+        </Async>
+
+        <Async name="ASYNC_FLYWAY">
+            <AppenderRef ref="LOG_FILE_FLYWAY"/>
+        </Async>
+
+        <Async name="ASYNC_SCRIPT">
+            <AppenderRef ref="LOG_FILE_SCRIPTS"/>
+        </Async>
+
+        <Async name="ASYNC_DAO">
+            <AppenderRef ref="LOG_FILE_DAO"/>
+        </Async>
+
+        <Async name="ASYNC_API">
+            <AppenderRef ref="LOG_FILE_API"/>
+        </Async>
+
+        <Async name="ASYNC_VIEW_HIERARCHY">
+            <AppenderRef ref="LOG_FILE_VIEW_HIERARCHY"/>
+        </Async>
+
+        <Async name="ASYNC_SCADA-LTS_DAO">
+            <AppenderRef ref="LOG_FILE_SCADA-LTS_DAO"/>
+        </Async>
+
+    </Appenders>
+
+    <Loggers>
+
+        <!-- Normal Logging-->
+        <Logger name="org.directwebremoting" level="warn"/>
+        <Logger name="org" level="warn"/>
+        <Logger name="org.springframework.web.servlet.FrameworkServlet" level="error"/>
+        <Logger name="com.serotonin.db.spring.ExtendedJdbcTemplate" level="error"/>
+        <Logger name="com.serotonin.mango" level="info"/>
+
+        <Logger name="com.serotonin.modbus4j.ip.listener" level="debug">
+            <AppenderRef ref="ASYNC_MODBUS"/>
+        </Logger>
+
+        <Logger name="com.serotonin.mango.db" level="info">
+            <AppenderRef ref="ASYNC_FLYWAY"/>
+        </Logger>
+
+        <Logger name="com.serotonin.mango.db.dao.DataSourceDao" level="debug">
+            <AppenderRef ref="ASYNC_DAO"/>
+        </Logger>
+
+        <Logger name="com.serotonin.mango.rt.RuntimeManager" level="debug">
+            <AppenderRef ref="ASYNC_DAO"/>
+        </Logger>
+
+        <Logger name="com.serotonin.mango.web.dwr.DataPointEditDwr" level="debug">
+            <AppenderRef ref="ASYNC_DAO"/>
+        </Logger>
+
+        <Logger name="org.scada_lts.service" level="info">
+            <AppenderRef ref="ASYNC_API"/>
+        </Logger>
+
+        <Logger name="org.scada_lts.dao" level="info">
+            <AppenderRef ref="ASYNC_SCADA-LTS_DAO"/>
+        </Logger>
+
+        <!-- WARNING! TRACE LEVEL GENERATE HUGE AMOUNT OF LOGS! -->
+        <Logger name="org.scada_lts.dao.alarms.PlcAlarmsDAO" level="trace">
+            <AppenderRef ref="ASYNC_SCADA-LTS_DAO"/>
+        </Logger>
+
+        <Logger name="org.apache.log4j.xml" level="debug">
+            <AppenderRef ref="ASYNC"/>
+        </Logger>
+
+        <Root level="info">
+            <AppenderRef ref="STDOUT"/>
+            <AppenderRef ref="ASYNC"/>
+        </Root>
+    </Loggers>
+
+</Configuration>

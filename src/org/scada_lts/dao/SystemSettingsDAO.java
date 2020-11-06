@@ -102,6 +102,9 @@ public class SystemSettingsDAO {
 	private static final String COLUMN_NAME_SETTING_VALUE = "settingValue";
 	private static final String COLUMN_NAME_SETTINGS_NAME = "settingName";
 
+	// Database
+	public static final String DATABASE_INFO_SCHEMA_VERSION = "version";
+
 	private static final String DELETE_WATCH_LISTS = "delete from watchLists";
 	private static final String DELETE_MANGO_VIEWS = "delete from mangoViews";
 	private static final String DELETE_POINT_EVENT_DETECTORS = "delete from pointEventDetectors";
@@ -145,6 +148,9 @@ public class SystemSettingsDAO {
 	private static final String SELECT_DATABASE = ""
 			+ "select "
 			+ DATABASE_STATEMENT + ";";
+
+	private static final String SELECT_LATEST_SCHEMA_VERSION = ""
+			+ "SELECT version FROM schema_version ORDER BY version DESC LIMIT 1";
 	// @formatter:on
 
 	// Value cache
@@ -261,6 +267,26 @@ public class SystemSettingsDAO {
 				throw new ShouldNeverHappenException(e1);
 			}
 		}
+	}
+
+	public String getDatabaseSchemaVersion(String key, String defaultValue) {
+		String result = cache.get(key);
+		if (result == null) {
+			if (!cache.containsKey(key)) {
+				try {
+					result = DAO.getInstance().getJdbcTemp().queryForObject(SELECT_LATEST_SCHEMA_VERSION, String.class);
+				} catch (EmptyResultDataAccessException e) {
+					result = null;
+				}
+				cache.put(key, result);
+				if (result == null) {
+					result = defaultValue;
+				}
+			} else {
+				result = defaultValue;
+			}
+		}
+		return result;
 	}
 
 	/**

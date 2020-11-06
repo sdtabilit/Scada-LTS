@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+    Mango - Open Source M2M - http://mango.serotoninsoftware.com
+    Copyright (C) 2006-2009 Serotonin Software Technologies Inc.
+    @author Matthew Lohbihler
+    
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration>
+
+  <appender name="stdout" class="org.apache.log4j.ConsoleAppender">
+    <layout class="org.apache.log4j.PatternLayout">
+<!--      <param name="ConversionPattern" value="%d{ISO8601} %-5p [%c.%l] %m%n"/> -->
+      <param name="ConversionPattern" value="%-5p %d{ISO8601} (%C.%M:%L) - %m %n"/>
+    </layout>
+  </appender>
+  
+  <appender name="logfile" class="org.apache.log4j.DailyRollingFileAppender">
+    <param name="File" value="${catalina.base}/logs/mango.log"/>
+    <param name="DatePattern" value="yyyy-MM-dd"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%-5p %d{ISO8601} (%C.%M:%L) - %m %n"/>
+    </layout>
+  </appender>
+
+  <appender name="historyfile" class="org.apache.log4j.DailyRollingFileAppender">
+    <param name="File" value="${catalina.base}/logs/history.log"/>
+    <param name="DatePattern" value="yyyy-MM-dd"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%-5p %d{ISO8601} (%C.%M:%L) - %m %n"/>
+    </layout>
+  </appender>
+  
+  <appender name="modbuslogfile" class="org.apache.log4j.RollingFileAppender">
+    <param name="File" value="${catalina.base}/logs/modbus.log"/>
+    <param name="MaxFileSize" value="10000KB"/>
+    <param name="MaxBackupIndex" value="20"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%-5p %d{ISO8601} (%C.%M:%L) - %m %n"/>
+    </layout>
+  </appender>
+
+  <appender name="scriptslogfile" class="org.apache.log4j.RollingFileAppender">
+    <param name="File" value="${catalina.base}/logs/scripts.log"/>
+    <param name="MaxFileSize" value="1000KB"/>
+    <param name="MaxBackupIndex" value="10"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%-5p %d{ISO8601} (%C.%M:%L) - %m %n"/>
+    </layout>
+  </appender>
+  
+   <appender name="apilogfile" class="org.apache.log4j.RollingFileAppender">
+    <param name="File" value="${catalina.base}/logs/api.log"/>
+    <param name="MaxFileSize" value="1000KB"/>
+    <param name="MaxBackupIndex" value="10"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%-5p %d{ISO8601} (%C.%M:%L) - %m %n"/>
+    </layout>
+  </appender>
+  
+  <appender name="viehierarchyservicelogfile" class="org.apache.log4j.RollingFileAppender">
+    <param name="File" value="${catalina.base}/logs/viehierarchyservicelogfile.log"/>
+    <param name="MaxFileSize" value="1000KB"/>
+    <param name="MaxBackupIndex" value="10"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%-5p %d{ISO8601} (%C.%M:%L) - %m %n"/>
+    </layout>
+  </appender>
+  
+  
+  <appender name="flywaylogfile" class="org.apache.log4j.RollingFileAppender">
+    <param name="File" value="${catalina.base}/logs/flayway.log"/>
+    <param name="MaxFileSize" value="1000KB"/>
+    <param name="MaxBackupIndex" value="10"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%-5p %d{ISO8601} (%C.%M:%L) - %m %n"/>
+    </layout>
+  </appender>
+  
+  
+  <appender name="scadalstdaoLogfile" class="org.apache.log4j.RollingFileAppender">
+    <param name="File" value="${catalina.base}/logs/scadaLTSDAO.log"/>
+    <param name="MaxFileSize" value="1000KB"/>
+    <param name="MaxBackupIndex" value="10"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%-5p %d{ISO8601} (%C.%M:%L) - %m %n"/>
+    </layout>
+  </appender>
+  
+  <appender name="daologfile" class="org.apache.log4j.RollingFileAppender">
+    <param name="File" value="${catalina.base}/logs/dao.log"/>
+    <param name="MaxFileSize" value="1000KB"/>
+    <param name="MaxBackupIndex" value="10"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%-5p %d{ISO8601} (%C.%M:%L) - %m %n"/>
+    </layout>
+  </appender>
+
+  <appender name="grove" class="com.serotonin.mango.util.MangoGroveLogAppender"/>
+  
+  <appender name="async" class="org.apache.log4j.AsyncAppender">
+    <param name="LocationInfo" value="true"/>
+    <appender-ref ref="logfile"/>
+    <appender-ref ref="grove"/>
+  </appender>
+
+  <appender name="modbusasync" class="org.apache.log4j.AsyncAppender">
+    <param name="LocationInfo" value="true"/>
+    <appender-ref ref="modbuslogfile"/>
+  </appender>
+  
+  <appender name="flywayasync" class="org.apache.log4j.AsyncAppender">
+    <param name="LocationInfo" value="true"/>
+    <appender-ref ref="flywaylogfile"/>
+  </appender>
+  
+
+  <appender name="scriptsasync" class="org.apache.log4j.AsyncAppender">
+    <param name="LocationInfo" value="true"/>
+    <appender-ref ref="scriptslogfile"/>
+  </appender>
+  
+  <appender name="daoasync" class="org.apache.log4j.AsyncAppender">
+    <param name="LocationInfo" value="true"/>
+    <appender-ref ref="daologfile"/>
+  </appender>
+  
+  <appender name="apiasync" class="org.apache.log4j.AsyncAppender">
+    <param name="LocationInfo" value="true"/>
+    <appender-ref ref="apilogfile"/>
+  </appender>
+  
+  <appender name="viehierarchyservicelogfileasync" class="org.apache.log4j.AsyncAppender">
+    <param name="LocationInfo" value="true"/>
+    <appender-ref ref="viehierarchyservicelogfile"/>
+  </appender>
+  
+  <appender name="scadadaoasync" class="org.apache.log4j.AsyncAppender">
+    <param name="LocationInfo" value="true"/>
+    <appender-ref ref="scadalstdaoLogfile"/>
+  </appender>
+  
+  <appender name="apiasync" class="org.apache.log4j.AsyncAppender">
+    <param name="LocationInfo" value="true"/>
+    <appender-ref ref="apilogfile"/>
+  </appender>
+  
+  
+<!-- Normal Logging -->
+  <category name="org.directwebremoting"><level value="warn"/></category>
+  <category name="org"><level value="warn"/></category>
+  <category name="org.springframework.web.servlet.FrameworkServlet"><level value="error"/></category>
+  <category name="com.serotonin.db.spring.ExtendedJdbcTemplate"><level value="error"/></category>
+  <category name="com.serotonin.mango"><level value="info"/></category>
+
+<!-- Modbus Logging -->
+  <category name="com.serotonin.modbus4j.ip.listener" additivity="false">
+    <level value="debug"/>
+    <appender-ref ref="modbusasync"/>
+  </category>
+
+  <category name="br.org.scadabr.modbus4j.messaging" additivity="false">
+    <level value="debug"/>
+    <appender-ref ref="modbusasync"/>
+  </category>
+  
+<!-- Flyway logging -->
+<category name="com.serotonin.mango.db" additivity="false">
+    <level value="info"/>
+    <appender-ref ref="flywayasync"/>
+</category>
+
+
+<!--   
+  <category name="com.serotonin.mango.rt.dataSource.modbus"  additivity="false">
+    <level value="debug"/>
+    <appender-ref ref="modbusasync"/>
+  </category>
+ -->
+<!-- Script Logging -->
+
+<!--   <category name="br.org.scadabr.rt.scripting" additivity="false"> -->
+<!--     <level value="debug"/> -->
+<!--     <appender-ref ref="scriptsasync"/> -->
+<!--   </category> -->
+
+<!--   <category name="com.serotonin.mango.rt.link" additivity="false"> -->
+<!--     <level value="debug"/> -->
+<!--     <appender-ref ref="scriptsasync"/> -->
+<!--   </category> -->
+
+<!--   <category name="com.serotonin.mango.rt.dataSource.meta"> -->
+<!--     <level value="debug"/> -->
+<!--     <appender-ref ref="scriptsasync"/> -->
+<!--   </category> -->
+
+<!-- Dao Logging -->
+  <category name="com.serotonin.mango.db.dao.DataSourceDao" additivity="false">
+    <level value="debug"/>
+    <appender-ref ref="daoasync"/>
+  </category>
+
+  <category name="com.serotonin.mango.rt.RuntimeManager" additivity="false">
+    <level value="debug"/>
+    <appender-ref ref="daoasync"/>
+  </category>
+
+  <category name="com.serotonin.mango.web.dwr.DataSourceEditDwr" additivity="false">
+    <level value="debug"/>
+    <appender-ref ref="daoasync"/>
+  </category>
+  
+   <category name="org.scada_lts.web.mvc.api" additivity="false">
+    <level value="info"/>
+    <appender-ref ref="apiasync"/>
+  </category>
+  
+  <category name="org.scada_lts.service" additivity="false">
+    <level value="info"/>
+    <appender-ref ref="viehierarchyservicelogfileasync"/>
+  </category>
+  
+  <category name="org.scada_lts.dao" additivity="false">
+    <level value="trace"/>
+    <appender-ref ref="scadadaoasync"/>
+  </category>
+
+  <category name="org.scada_lts.dao.alarms.PlcAlarmsDAO" additivity="false">
+    <level value="trace"/>
+    <appender-ref ref="scadadaoasync"/>
+    <appender-ref ref="stdout"/>
+  </category>
+
+<!-- Root Log -->
+  <root>
+    <level value="info"/>
+    <appender-ref ref="async"/>
+    <appender-ref ref="stdout"/>
+  </root>
+
+</log4j:configuration>

@@ -124,7 +124,11 @@ public class DataPointService implements MangoDataPoint {
 		setRelationalData(dp);
 		return dp;
 	}
-
+	@Override
+	public DataPointVO getDataPointByXid(String xid) {
+		DataPointVO dp = dataPointDAO.getDataPoint(xid);
+		return dp;
+	}
 	@Override
 	public DataPointVO getDataPoint(int id) {
 		DataPointVO dp = dataPointDAO.getDataPoint(id);

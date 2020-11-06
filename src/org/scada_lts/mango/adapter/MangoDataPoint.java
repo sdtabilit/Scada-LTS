@@ -46,6 +46,8 @@ public interface MangoDataPoint {
 
 	DataPointVO getDataPoint(String xid);
 
+	DataPointVO getDataPointByXid(String xid);
+
 	void saveDataPoint(final DataPointVO dp);
 
 	void insertDataPoint(final DataPointVO dp);

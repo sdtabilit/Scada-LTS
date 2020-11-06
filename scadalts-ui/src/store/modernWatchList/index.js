@@ -6,6 +6,8 @@ import Axios from "axios";
  */
 const modernWatchList = {
     state: {
+        chartGroupData: true,
+        chartGroupCount: 500,
         chartDefaultColors: [
             "#39B54A",
             "#69FF7D",
@@ -40,7 +42,9 @@ const modernWatchList = {
                     minute: "HH:mm:ss",
                     hour: "HH:mm",
                     day: "MMM dd",
-                }
+                },
+                groupData: true,
+                groupCount: 500,
             }, {
                 id: "dateAxis2",
                 type: "DateAxis",
@@ -52,7 +56,9 @@ const modernWatchList = {
                     minute: "HH:mm:ss",
                     hour: "HH:mm",
                     day: "MMM dd",
-                }
+                },
+                groupData: true,
+                groupCount: 500,
             }],
             yAxes: [{
                 id: "valueAxis1",
@@ -142,6 +148,36 @@ const modernWatchList = {
     },
     mutations: {
         /**
+         * Setup Chart Group Settings
+         * 
+         * This allow to manage aggregation data on the chart.
+         * This setting is enabled by default.
+         * 
+         * @param {*} state 
+         * @param {Object} settings {chartGroupData, chartGroupCount}
+         */
+        setChartGroupSettings(state, settings) {
+            console.debug("Vuex::Mutation::setChartGroupSettings")
+            state.chartGroupData = settings.chartGroupData;
+            state.chartGroupCount = settings.chartGroupCount;
+        },
+        saveChartGroupSettings(state) {
+            console.debug("Vuex::Mutation::saveChartGroupSettings")
+            let savedObject = {
+                "chartGroupData": state.chartGroupData,
+                "chartGroupCount": state.chartGroupCount,
+            };
+            localStorage.setItem(`MWL_ChartGroupConfig`, JSON.stringify(savedObject))
+        },
+        loadChartGroupSettings(state) {
+            console.debug("Vuex::Mutation::loadChartGroupSettings")
+            let loadedObject = JSON.parse(localStorage.getItem(`MWL_ChartGroupConfig`));
+            if (loadedObject !== null) {
+                state.chartGroupData = loadedObject.chartGroupData;
+                state.chartGroupCount = loadedObject.chartGroupCount;
+            }
+        },
+        /**
          * Chart Configuration Reset
          * 
          * Reset chart default values while creating a new chart or
@@ -165,7 +201,9 @@ const modernWatchList = {
                         minute: "HH:mm:ss",
                         hour: "HH:mm",
                         day: "MMM dd",
-                    }
+                    },
+                    groupData: state.chartGroupData,
+                    groupCount: state.chartGroupCount,
                 }, {
                     id: "dateAxis2",
                     type: "DateAxis",
@@ -177,7 +215,9 @@ const modernWatchList = {
                         minute: "HH:mm:ss",
                         hour: "HH:mm",
                         day: "MMM dd",
-                    }
+                    },
+                    groupData: state.chartGroupData,
+                    groupCount: state.chartGroupCount,
                 }],
                 yAxes: [{
                     id: "valueAxis1",

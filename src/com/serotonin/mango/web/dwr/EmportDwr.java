@@ -48,6 +48,8 @@ import com.serotonin.mango.db.dao.PointLinkDao;
 import com.serotonin.mango.db.dao.PointValueDao;
 import com.serotonin.mango.db.dao.PublisherDao;
 import com.serotonin.mango.db.dao.ScheduledEventDao;
+import com.serotonin.mango.vo.event.PointEventDetectorVO;
+import org.scada_lts.dao.PointEventDetectorDAO;
 import org.scada_lts.dao.SystemSettingsDAO;
 import com.serotonin.mango.db.dao.UserDao;
 import com.serotonin.mango.db.dao.ViewDao;
@@ -103,7 +105,21 @@ public class EmportDwr extends BaseDwr {
 				scripts, pointValues, maxPointValues, systemSettings,
 				usersProfiles);
 	}
-
+	public static String exportJSON(String xid){
+		Map<String, Object> data = new LinkedHashMap<String, Object>();
+		DataPointVO dataPoints = new DataPointDao().getDataPointByXid(xid);
+		List<PointEventDetectorVO> detectors = new PointEventDetectorDAO().getPointEventDetectors(dataPoints);
+		dataPoints.setEventDetectors(detectors);
+		data.put(DATA_POINTS, dataPoints == null?"In the database there is no data point with given xid "+xid:dataPoints);
+		JsonWriter writer = new JsonWriter();
+		try {
+			return writer.write(data);
+		} catch (JsonException e) {
+			throw new ShouldNeverHappenException(e);
+		} catch (IOException e) {
+			throw new ShouldNeverHappenException(e);
+		}
+	}
 	public static String createExportJSON(int prettyIndent,
 			boolean graphicalViews, boolean eventHandlers, boolean dataSources,
 			boolean dataPoints, boolean scheduledEvents,

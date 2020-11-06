@@ -67,6 +67,8 @@ public class View implements Serializable, JsonSerializable {
 	
 	transient private int resolution = ResolutionView.R1600x1200;
 
+	transient private long modificationTime;
+
 	private int userId;
 	private List<ViewComponent> viewComponents = new CopyOnWriteArrayList<ViewComponent>();
 	private int anonymousAccess = ShareUser.ACCESS_NONE;
@@ -293,6 +295,14 @@ public class View implements Serializable, JsonSerializable {
 			this.width = 1920;
 		}
 		
+	}
+
+	public long getModificationTime() {
+		return modificationTime;
+	}
+
+	public void setModificationTime(long modificationTime) {
+		this.modificationTime = modificationTime;
 	}
 	
 	public void validate(DwrResponseI18n response) {

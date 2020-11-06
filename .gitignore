@@ -67,8 +67,6 @@ local.properties
 .cproject
 # PDT-specific
 .buildpath
-# seroUtils.jar
-seroUtils.jar
 *deploy_rsa
 *deploy_rsa.pub
 *.exe
@@ -105,3 +103,16 @@ scadabr-1.1.0-RC_.iml
 ###########################
 catalina-jrebel.bat
 scadabr-1.1.0-RC.iml
+# Ignore Gradle project-specific cache directory
+.gradle
+gradle/
+# Ignore Gradle build output directory
+build
+databases
+build.gradle
+docker-compose.yml
+Dockerfile
+gradlew
+gradlew.bat
+settings.gradle
+scadalts-ui/build.gradle

@@ -15,9 +15,10 @@ before_script:
 - chmod +x ./get_seroUtils.sh
 - "./get_seroUtils.sh"
 - ls -l ./WebContent/WEB-INF/lib/seroUtils.jar
-- sed -i '94s/.*/        return "'$SCADA_LTS_MILESTONE'";/' ./src/com/serotonin/mango/Common.java
+- sed -i '96s/.*/        return "'$SCADA_LTS_MILESTONE'";/' ./src/com/serotonin/mango/Common.java
 - cd ./scadalts-ui
 - npm install
+- npm run-script build-config -- $SCADA_LTS_MILESTONE $TRAVIS_BUILD_NUMBER $TRAVIS_BRANCH
 - cd ../
 language: java
 jdk:
@@ -25,13 +26,12 @@ jdk:
 services:
 - docker
 - mysql
-script: ant war && ant junit
+script: ant war
 branches:
   only:
-  - "/^test-2.3.3.*$/"
   - "/^develop.*$/"
   - "/^master.*$/"
-  - "/^feature/#1414.*$/"
+  - "/^release/2.4.0.*$/"
 notifications:
   email: false
 env:
@@ -74,8 +74,8 @@ after_script:
 - export TAG_DEV_OR_ISSUE=`if [ "$TRAVIS_BRANCH" == "develop" ]; then echo "siv_dev";
   else echo $TAGISSUE ; fi`
 - echo $TAG_DEV_OR_ISSUE
-- export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TAG_DEV_OR_ISSUE;
-  fi`
+- export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TAG_DEV_OR_ISSUE;  fi`
+- export TAG=`if [ "$TAG" == "" ]; then echo "release"; else echo $TAG;  fi`
 - echo $MY_IMG_NAME; echo $TAG; echo $TRAVIS_COMMIT
 - docker build -t $MY_IMG_NAME:$TRAVIS_COMMIT .
 - docker tag $MY_IMG_NAME:$TRAVIS_COMMIT $MY_IMG_NAME:$TAG

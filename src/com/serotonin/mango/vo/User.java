@@ -498,7 +498,7 @@ public class User implements SetPointSource, HttpSessionBindingListener,
 		if (!admin) {
 			List<String> dsXids = new ArrayList<String>();
 			DataSourceDao dataSourceDao = new DataSourceDao();
-			for (Integer dsId : dataSourcePermissions)
+			for (Integer dsId : getDataSourcePermissions())
 				dsXids.add(dataSourceDao.getDataSource(dsId).getXid());
 			map.put("dataSourcePermissions", dsXids);
 

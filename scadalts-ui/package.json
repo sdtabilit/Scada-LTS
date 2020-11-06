@@ -1,6 +1,10 @@
 {
   "name": "scadalts-ui",
   "version": "0.1.0",
+  "tag": "2.3.2",
+  "milestone": "2.0.0",
+  "build": "1",
+  "branch": "local",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve --port 3000",
@@ -8,7 +12,8 @@
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint",
-    "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/locales/**/*.json'"
+    "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/locales/**/*.json'",
+    "build-config": "node build-config"
   },
   "dependencies": {
     "@amcharts/amcharts4": "4.8.9",
@@ -49,7 +54,7 @@
     "@vue/cli-plugin-eslint": "3.11.0",
     "@vue/cli-plugin-unit-mocha": "3.11.0",
     "@vue/cli-service": "^4.3.1",
-    "@vue/test-utils": "1.0.0-beta.29",
+    "@vue/test-utils": "^1.0.3",
     "babel-eslint": "10.0.1",
     "chai": "4.1.2",
     "cypress": "^4.0.1",

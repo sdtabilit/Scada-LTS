@@ -205,6 +205,7 @@ public class UsersProfileDao extends BaseDao {
 		profile.setId(doInsert(PROFILES_INSERT, new Object[] {
 				profile.getXid(), profile.getName() }));
 
+		setViews(profile);
 		saveRelationalData(profile);
 
 		currentProfileList.add(profile);
@@ -308,6 +309,10 @@ public class UsersProfileDao extends BaseDao {
 					}
 				}));
 
+		setViews(profile);
+	}
+
+	private void setViews(UsersProfileVO profile) {
 		List<View> allviews = new ViewDao().getViews();
 		profile.defineViews(allviews);
 	}

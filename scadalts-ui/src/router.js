@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Alarms from './views/Alarms'
 import About from './views/About'
 import HistoricalAlarms from "./views/HistoricalAlarms"
+import SystemSettings from "./views/SystemSettings"
 
 Vue.use(Router)
 
@@ -29,6 +30,11 @@ export default new Router({
       path: '/historical-alarms',
       name: 'historical-alarms',
       component: HistoricalAlarms
+    },
+    {
+      path: '/system-settings',
+      name: 'system-settings',
+      component: SystemSettings
     },
     {
       path: '/example-ph',

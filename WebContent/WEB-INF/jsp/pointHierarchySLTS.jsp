@@ -75,8 +75,8 @@ div#tree {
 	display: block;
 	float: left;
 	background: #2fb34a;
-	margin: 0 5px;
-	height: 37px;
+    margin: 5px 6px;
+    height: 16px;
 	width: 1px;
 }
 
@@ -101,9 +101,11 @@ div#tree {
 
 .nav-pills>li>a {
 	line-height: 1px;
-	margin-right: 2px;
-	padding-left: 12px;
-	padding-right: 12px;
+	margin-right: 1px;
+	padding: 4px;
+}
+.nav-pills>li>a>img {
+    max-width: 16px;
 }
 
 table {
