@@ -156,6 +156,15 @@ mango.erecip.EmailRecipients = function(prefix, testEmailMessage, mailingLists, 
         this.addListEntry("A"+ this.nextAddressId++, "images/email.png", addr);
         this.checkListEmptyMessage();
     }
+
+    this.addPhone = function(phone) {
+            if (!phone)
+                phone = $get(this.prefix +"Address");
+            if (phone == "")
+                return;
+            this.addListEntry("P"+ this.nextAddressId++, "images/clock.png", phone);
+            this.checkListEmptyMessage();
+        }
     
     this.createRecipientArray = function() {
         var recipientList = $(this.prefix +"List");
@@ -176,6 +185,10 @@ mango.erecip.EmailRecipients = function(prefix, testEmailMessage, mailingLists, 
                     list[list.length] = {
                             recipientType: 3, // EmailRecipient.TYPE_ADDRESS
                             referenceAddress: $(this.prefix + id +"Description").innerHTML};
+                else if (id.startsWith("P"))
+                    list[list.length] = {
+                            recipientType: 4,  // EmailRecipient.TYPE_PHONE
+                            referencePhone: $(this.prefix + id + "Description").innerHTML};
                 else
                     dojo.debug("Unknown recipient mango id: "+ id);
             }
@@ -249,6 +262,8 @@ mango.erecip.EmailRecipients = function(prefix, testEmailMessage, mailingLists, 
                     this.addUser(recip.referenceId);
                 else if (recip.recipientType == 3) // EmailRecipient.TYPE_ADDRESS
                     this.addAddress(recip.referenceAddress);
+                else if (recip.recipientType == 4)
+                    this.addPhone(recip.referencePhone);
                 else
                     dojo.debug("Unknown recipient type id: "+ recip.recipientType);
             }

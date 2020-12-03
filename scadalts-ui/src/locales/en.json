@@ -5,5 +5,10 @@
   "plcalarms.alarm.inactive":"Alarm is gone",
   "plcalarms.alarm.active":"Alarm triggered",
   "plcalarms.alarm.acknowledge": "Alarm acknowledge",
+  "notificationlist.title": "Notification List - Configuration",
+  "notificationlist.table.pointname": "Point Name",
+  "notificationlist.table.mail": "E-mail",
+  "notificationlist.table.sms": "SMS",
+  "notificationlist.select.label": "Selected Mailing List",
   "about": "This is an about page (i18n test) locales"
 }

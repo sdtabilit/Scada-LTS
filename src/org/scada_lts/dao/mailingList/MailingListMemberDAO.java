@@ -25,6 +25,7 @@ import com.serotonin.mango.vo.mailingList.UserEntry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.scada_lts.dao.DAO;
+import com.serotonin.mango.vo.mailingList.PhoneEntry;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.transaction.annotation.Isolation;
@@ -49,6 +50,7 @@ public class MailingListMemberDAO {
 	private static final String COLUMN_NAME_TYPE_ID = "typeId";
 	private static final String COLUMN_NAME_USER_ID = "userId";
 	private static final String COLUMN_NAME_ADDRESS = "address";
+	private static final String COLUMN_NAME_PHONE = "phone";
 
 	// @formatter:off
 	private static final String MAILING_MEMBER_SELECT = ""
@@ -56,6 +58,7 @@ public class MailingListMemberDAO {
 				+ COLUMN_NAME_TYPE_ID + ", "
 				+ COLUMN_NAME_USER_ID + ", "
 				+ COLUMN_NAME_ADDRESS + ", "
+				+ COLUMN_NAME_PHONE	+ ", "
 			+ "'' from mailingListMembers where "
 				+ COLUMN_NAME_ID + "=? ";
 
@@ -64,8 +67,9 @@ public class MailingListMemberDAO {
 				+ COLUMN_NAME_ID + ", "
 				+ COLUMN_NAME_TYPE_ID + ", "
 				+ COLUMN_NAME_USER_ID + ", "
-				+ COLUMN_NAME_ADDRESS + ") "
-			+ "values (?,?,?,?) ";
+				+ COLUMN_NAME_ADDRESS + ", "
+				+ COLUMN_NAME_PHONE + ") "
+			+ "values (?,?,?,?,?) ";
 
 	private static final String MAILING_MEMBER_DELETE_WHERE_ML_ID = ""
 			+ "delete from mailingListMembers where "
@@ -80,21 +84,25 @@ public class MailingListMemberDAO {
 
 		@Override
 		public EmailRecipient mapRow(ResultSet rs, int rowNum) throws SQLException {
-			int type = rs.getInt(1);
+			int type = rs.getInt(COLUMN_NAME_TYPE_ID);
 			switch (type) {
 				case EmailRecipient.TYPE_MAILING_LIST:
 					MailingList ml = new MailingList();
-					ml.setId(rs.getInt(2));
+					ml.setId(rs.getInt(COLUMN_NAME_ID));
 					ml.setName(rs.getString(4));
 					return ml;
 				case EmailRecipient.TYPE_USER:
 					UserEntry ue = new UserEntry();
-					ue.setUserId(rs.getInt(2));
+					ue.setUserId(rs.getInt(COLUMN_NAME_USER_ID));
 					return ue;
 				case EmailRecipient.TYPE_ADDRESS:
 					AddressEntry ae = new AddressEntry();
-					ae.setAddress(rs.getString(3));
+					ae.setAddress(rs.getString(COLUMN_NAME_ADDRESS));
 					return ae;
+				case EmailRecipient.TYPE_PHONE:
+					PhoneEntry pe = new PhoneEntry();
+					pe.setPhone(rs.getString(COLUMN_NAME_PHONE));
+					return pe;
 			}
 			throw new ShouldNeverHappenException(
 					"Unknown mailing list entry type: " + type);
@@ -131,6 +139,7 @@ public class MailingListMemberDAO {
 						ps.setInt(2, e.getRecipientType());
 						ps.setInt(3, e.getReferenceId());
 						ps.setString(4, e.getReferenceAddress());
+						ps.setString(5, e.getReferencePhone());
 					}
 				});
 	}

@@ -51,6 +51,11 @@ public class UserEntry extends EmailRecipient {
         return null;
     }
 
+    @Override
+    public String getReferencePhone() {
+        return null;
+    }
+
     public int getUserId() {
         return userId;
     }
@@ -78,6 +83,19 @@ public class UserEntry extends EmailRecipient {
             return;
         if (!user.isDisabled())
             addresses.add(user.getEmail());
+    }
+
+    @Override
+    public void appendPhones(Set<String> phones, DateTime sendTime) {
+        appendAllPhones(phones);
+    }
+
+    @Override
+    public void appendAllPhones(Set<String> phones) {
+        if (user == null)
+            return;
+        if (!user.isDisabled())
+            phones.add(user.getPhone());
     }
 
     @Override

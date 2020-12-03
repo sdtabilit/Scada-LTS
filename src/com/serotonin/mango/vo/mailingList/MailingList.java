@@ -63,6 +63,11 @@ public class MailingList extends EmailRecipient {
     }
 
     @Override
+    public String getReferencePhone() {
+        return null;
+    }
+
+    @Override
     public int getReferenceId() {
         return id;
     }
@@ -118,6 +123,20 @@ public class MailingList extends EmailRecipient {
     public void appendAllAddresses(Set<String> addresses) {
         for (EmailRecipient e : entries)
             e.appendAddresses(addresses, null);
+    }
+
+    @Override
+    public void appendPhones(Set<String> phone, DateTime sendTime) {
+        if (sendTime != null && inactiveIntervals.contains(getIntervalIdAt(sendTime)))
+            return;
+        appendAllPhones(phone);
+    }
+
+    @Override
+    public void appendAllPhones(Set<String> phones) {
+        for (EmailRecipient e: entries)
+            e.appendPhones(phones, null);
+
     }
 
     private static int getIntervalIdAt(DateTime dt) {

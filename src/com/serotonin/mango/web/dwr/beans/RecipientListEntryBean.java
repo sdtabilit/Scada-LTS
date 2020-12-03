@@ -35,6 +35,7 @@ import com.serotonin.mango.vo.mailingList.AddressEntry;
 import com.serotonin.mango.vo.mailingList.EmailRecipient;
 import com.serotonin.mango.vo.mailingList.MailingList;
 import com.serotonin.mango.vo.mailingList.UserEntry;
+import com.serotonin.mango.vo.mailingList.PhoneEntry;
 
 @JsonRemoteEntity
 public class RecipientListEntryBean implements Serializable, JsonSerializable {
@@ -43,6 +44,7 @@ public class RecipientListEntryBean implements Serializable, JsonSerializable {
     private int recipientType;
     private int referenceId;
     private String referenceAddress;
+    private String referencePhone;
 
     public EmailRecipient createEmailRecipient() {
         switch (recipientType) {
@@ -58,6 +60,10 @@ public class RecipientListEntryBean implements Serializable, JsonSerializable {
             AddressEntry a = new AddressEntry();
             a.setAddress(referenceAddress);
             return a;
+        case EmailRecipient.TYPE_PHONE:
+            PhoneEntry p = new PhoneEntry();
+            p.setPhone(referencePhone);
+            return p;
         }
         throw new ShouldNeverHappenException("Unknown email recipient type: " + recipientType);
     }
@@ -68,6 +74,14 @@ public class RecipientListEntryBean implements Serializable, JsonSerializable {
 
     public void setReferenceAddress(String address) {
         referenceAddress = address;
+    }
+
+    public String getReferencePhone() {
+        return referencePhone;
+    }
+
+    public void setReferencePhone(String referencePhone) {
+        this.referencePhone = referencePhone;
     }
 
     public int getRecipientType() {
@@ -94,6 +108,8 @@ public class RecipientListEntryBean implements Serializable, JsonSerializable {
             map.put("username", new UserDao().getUser(referenceId).getUsername());
         else if (recipientType == EmailRecipient.TYPE_ADDRESS)
             map.put("address", referenceAddress);
+        else if (recipientType == EmailRecipient.TYPE_PHONE)
+            map.put("phone", referencePhone);
     }
 
     public void jsonDeserialize(JsonReader reader, JsonObject json) throws JsonException {
@@ -133,6 +149,11 @@ public class RecipientListEntryBean implements Serializable, JsonSerializable {
             referenceAddress = json.getString("address");
             if (referenceAddress == null)
                 throw new LocalizableJsonException("emport.error.recipient.missing.reference", "address");
+        }
+        else if (recipientType == EmailRecipient.TYPE_PHONE) {
+            referencePhone = json.getString("phone");
+            if (referencePhone == null)
+                throw new LocalizableJsonException("emport.error.recipient.missing.reference", "phone");
         }
     }
 }

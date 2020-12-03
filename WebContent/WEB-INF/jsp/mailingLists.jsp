@@ -19,6 +19,7 @@
 <%@ include file="/WEB-INF/jsp/include/tech.jsp" %>
 <%@page import="com.serotonin.mango.Common"%>
 <%@page import="com.serotonin.mango.vo.mailingList.EmailRecipient"%>
+<%@page import="com.serotonin.mango.vo.mailingList.EmailRecipient"%>
 <c:set var="NEW_ID"><%= Common.NEW_ID %></c:set>
 
 <tag:page dwr="MailingListsDwr" onload="init">
@@ -58,6 +59,9 @@
                 else if (entry.recipientType == <c:out value="<%= EmailRecipient.TYPE_ADDRESS %>"/>) {
                     entry.referenceId = nextAddressEntryId++;
                     appendAddressEntry(entry);
+                } else if (entry.recipientType == <c:out value="<%= EmailRecipient.TYPE_PHONE %>"/>) {
+                    entry.referenceId = nextAddressEntryId++;
+                    appendPhoneEntry(entry);
                 }
             }
             
@@ -138,7 +142,8 @@
             recipList[i] = {
                 recipientType : editingMailingList.entries[i].recipientType,
                 referenceId : editingMailingList.entries[i].referenceId,
-                referenceAddress : editingMailingList.entries[i].referenceAddress
+                referenceAddress : editingMailingList.entries[i].referenceAddress,
+                referencePhone : editingMailingList.entries[i].referencePhone
             };
         }
         return recipList;
@@ -217,16 +222,39 @@
         var addressEntry = {
             recipientType : <c:out value="<%= EmailRecipient.TYPE_ADDRESS %>"/>,
             referenceId : nextAddressEntryId++,
-            referenceAddress : addr
+            referenceAddress : addr,
+            referencePhone : null
         };
         editingMailingList.entries[editingMailingList.entries.length] = addressEntry;
         appendAddressEntry(addressEntry);
+        updateEmptyListMessage();
+    }
+
+    function createPhoneEntry() {
+        var phone = $get("phone");
+        if (phone == "") {
+            alert("<fmt:message key="mailingLists.noAddress"/>");
+            return;
+        }
+        var phoneEntry = {
+            recipientType : <c:out value="<%= EmailRecipient.TYPE_PHONE %>"/>,
+            referenceId : nextAddressEntryId++,
+            referenceAddress : null,
+            referencePhone : phone
+        };
+        editingMailingList.entries[editingMailingList.entries.length] = phoneEntry;
+        appendPhoneEntry(phoneEntry);
         updateEmptyListMessage();
     }
     
     function appendAddressEntry(addressEntry) {
         var content = createFromTemplate("mleAddress_TEMPLATE_", addressEntry.referenceId, "mailingListEntriesTable");
         $("mle"+ addressEntry.referenceId +"Address").innerHTML = addressEntry.referenceAddress;
+    }
+
+    function appendPhoneEntry(phoneEntry) {
+        var content = createFromTemplate("mlePhone_TEMPLATE_", phoneEntry.referenceId, "mailingListEntriesTable");
+        $("mle"+ phoneEntry.referenceId +"Address").innerHTML = phoneEntry.referencePhone;
     }
     
     function deleteAddressEntry(entryId) {
@@ -470,6 +498,13 @@
                 <tag:img png="add" title="common.add" onclick="createAddressEntry()"/>
               </td>
             </tr>
+            <tr>
+                <td class="formLabel"><fmt:message key="mailingLists.addPhone"/></td>
+                <td class="formField">
+                  <input id="phone" type="text" class="formLong" onmousedown="this.focus()"/>
+                  <tag:img png="add" title="common.add" onclick="createPhoneEntry()"/>
+                </td>
+              </tr>
           </table>
           
           <table width="100%">
@@ -486,6 +521,11 @@
               <td width="16"><tag:img png="email" title="mailingLists.emailAddress"/></td>
               <td id="mle_TEMPLATE_Address"></td>
               <td width="16"><tag:img png="bullet_delete" title="common.delete" onclick="deleteAddressEntry(getMangoId(this));"/></td>
+            </tr>
+            <tr id="mlePhone_TEMPLATE_" style="display:none;">
+                <td width="16"><tag:img png="clock" title="mailingLists.emailAddress"/></td>
+                <td id="mle_TEMPLATE_Address"></td>
+                <td width="16"><tag:img png="bullet_delete" title="common.delete" onclick="deleteAddressEntry(getMangoId(this));"/></td>
             </tr>
             <tbody id="mailingListEntriesTable">
               <tr><td width="16"></td><td></td><td width="16"></td></tr>

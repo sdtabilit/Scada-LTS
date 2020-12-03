@@ -46,6 +46,8 @@ public class EmailRecipientFactory implements TypeFactory {
             return MailingList.class;
         if (type == EmailRecipient.TYPE_USER)
             return UserEntry.class;
-        return AddressEntry.class;
+        if (type == EmailRecipient.TYPE_ADDRESS)
+            return AddressEntry.class;
+        return PhoneEntry.class;
     }
 }

@@ -44,6 +44,8 @@ public interface MangoMailingList {
 
 	Set<String> getRecipientAddresses(List<RecipientListEntryBean> beans, DateTime sendTime);
 
+	Set<String> getRecipientPhones(List<RecipientListEntryBean> beans, DateTime sendTime);
+
 	void populateEntrySubclasses(List<EmailRecipient> entries);
 
 	void saveMailingList(final MailingList ml);

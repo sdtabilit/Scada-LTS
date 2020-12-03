@@ -28,16 +28,18 @@ public class MailingListMember {
 	private int typeId;
 	private int userId;
 	private String address;
+	private String phone;
 
 	public MailingListMember() {
 
 	}
 
-	public MailingListMember(int mailingListId, int typeId, int userId, String address) {
+	public MailingListMember(int mailingListId, int typeId, int userId, String address, String phone) {
 		this.mailingListId = mailingListId;
 		this.typeId = typeId;
 		this.userId = userId;
 		this.address = address;
+		this.phone = phone;
 	}
 
 	public int getMailingListId() {
@@ -72,6 +74,14 @@ public class MailingListMember {
 		this.address = address;
 	}
 
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -102,6 +112,7 @@ public class MailingListMember {
 		result = 31 * result + typeId;
 		result = 31 * result + userId;
 		result = 31 * result + address.hashCode();
+		result = 31 * result + phone.hashCode();
 		return result;
 	}
 
@@ -111,7 +122,8 @@ public class MailingListMember {
 				"mailingListId=" + mailingListId +
 				", typeId=" + typeId +
 				", userId=" + userId +
-				", address='" + address + '\'' +
+				", address='" + address +
+				", phone='" + phone + '\'' +
 				'}';
 	}
 }

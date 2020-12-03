@@ -110,6 +110,20 @@ public class MailingListService implements MangoMailingList {
 	}
 
 	@Override
+	public Set<String> getRecipientPhones(List<RecipientListEntryBean> beans, DateTime sendTime) {
+		List<EmailRecipient> entries = new ArrayList<EmailRecipient>(beans.size());
+		for (RecipientListEntryBean bean : beans) {
+			entries.add(bean.createEmailRecipient());
+		}
+		populateEntrySubclasses(entries);
+		Set<String> phones = new HashSet<String>();
+		for (EmailRecipient entry : entries) {
+			entry.appendPhones(phones, sendTime);
+		}
+		return phones;
+	}
+
+	@Override
 	public void populateEntrySubclasses(List<EmailRecipient> entries) {
 		// Update the user type entries with their respective user objects.
 		UserDAO userDAO = new UserDAO();

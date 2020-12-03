@@ -35,12 +35,14 @@ abstract public class EmailRecipient implements JsonSerializable {
     public static final int TYPE_MAILING_LIST = 1;
     public static final int TYPE_USER = 2;
     public static final int TYPE_ADDRESS = 3;
+    public static final int TYPE_PHONE = 4;
 
     public static final ExportCodes TYPE_CODES = new ExportCodes();
     static {
         TYPE_CODES.addElement(TYPE_MAILING_LIST, "MAILING_LIST", "mailingLists.mailingList");
         TYPE_CODES.addElement(TYPE_USER, "USER", "mailingLists.emailAddress");
         TYPE_CODES.addElement(TYPE_ADDRESS, "ADDRESS", "common.user");
+        TYPE_CODES.addElement(TYPE_PHONE, "PHONE", "mailingLists.phoneNumber");
     }
 
     abstract public int getRecipientType();
@@ -49,9 +51,15 @@ abstract public class EmailRecipient implements JsonSerializable {
 
     abstract public void appendAllAddresses(Set<String> addresses);
 
+    abstract public void appendPhones(Set<String> phone, DateTime sendTime);
+
+    abstract public void appendAllPhones(Set<String> phones);
+
     abstract public int getReferenceId();
 
     abstract public String getReferenceAddress();
+
+    abstract public String getReferencePhone();
 
     /**
      * @throws JsonException

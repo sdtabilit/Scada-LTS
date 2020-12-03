@@ -53,6 +53,16 @@ public class AddressEntry extends EmailRecipient {
     }
 
     @Override
+    public void appendPhones(Set<String> phone, DateTime sendTime) {
+        appendAllPhones(phone);
+    }
+
+    @Override
+    public void appendAllPhones(Set<String> phones) {
+        return;
+    }
+
+    @Override
     public int getRecipientType() {
         return EmailRecipient.TYPE_ADDRESS;
     }
@@ -65,6 +75,11 @@ public class AddressEntry extends EmailRecipient {
     @Override
     public String getReferenceAddress() {
         return address;
+    }
+
+    @Override
+    public String getReferencePhone() {
+        return null;
     }
 
     @Override
