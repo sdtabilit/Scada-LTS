@@ -12,10 +12,20 @@
 plugins {
     id 'war'
     id 'java'
+    id "org.sonarqube" version "3.1.1"
+}
+
+sonarqube {
+  properties {
+    property "sonar.projectKey", "SCADA-LTS_Scada-LTS"
+    property "sonar.organization", "scada-lts"
+    property "sonar.host.url", "https://sonarcloud.io"
+  }
 }
 
 sourceCompatibility = 1.11
 targetCompatibility = 1.11
+
 
 // Environment variables to change
 subprojects {
@@ -24,13 +34,21 @@ subprojects {
     }
 }
 
+ext {
+    tomcatVersion = '8.5.61'
+    webAppLibs = 'WebContent/WEB-INF/lib'
+}
+
 repositories {
     jcenter()
+    mavenCentral()
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir:'WebContent/WEB-INF/lib')
-    compile fileTree(include: ['*.jar'], dir: System.getenv("CATALINA_HOME") + '/lib')
+    implementation fileTree(include: ['*.jar'], dir:"$webAppLibs")
+    implementation "org.apache.tomcat:tomcat-catalina:$tomcatVersion"
+    
+//    providedCompile group: 'javax.servlet', name: 'javax.servlet-api'
 }
 sourceSets {
     main {

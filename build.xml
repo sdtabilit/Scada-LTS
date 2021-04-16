@@ -500,6 +500,173 @@
 		<record action="stop" name="${war.log.name}"/>
 	</target>
 
+	<target name="just-war" description="Bundles prepared resources of the application as a WAR file">
+		<record action="start" name="${war.log.name}"/>
+		<property name="js-ui.dir"  value="WebContent/resources/js-ui"/>
+		<property name="src-js-ui.dir" value="scadalts-ui/dist"/>
+		<property name="web.classes.dir"  value="WebContent/WEB-INF/classes"/>
+
+		<delete dir="${js-ui.dir}/app"></delete>
+		<delete dir="${js-ui.dir}/views"></delete>
+		<delete dir="${js-ui.dir}/pointHierarchy"></delete>
+		<delete dir="${js-ui.dir}/ds"></delete>
+		<delete dir="${js-ui.dir}/modernWatchList"></delete>
+
+
+		<mkdir dir="${js-ui.dir}/app"></mkdir>
+		<mkdir dir="${js-ui.dir}/app/js"></mkdir>
+		<mkdir dir="${js-ui.dir}/app/css"></mkdir>
+		<mkdir dir="${js-ui.dir}/app/fonts"></mkdir>
+		<mkdir dir="${js-ui.dir}/views"></mkdir>
+		<mkdir dir="${js-ui.dir}/views/js"></mkdir>
+		<mkdir dir="${js-ui.dir}/views/css"></mkdir>
+		<mkdir dir="${js-ui.dir}/pointHierarchy"></mkdir>
+		<mkdir dir="${js-ui.dir}/pointHierarchy/js"></mkdir>
+		<mkdir dir="${js-ui.dir}/pointHierarchy/css"></mkdir>
+		<mkdir dir="${js-ui.dir}/ds"></mkdir>
+		<mkdir dir="${js-ui.dir}/ds/js"></mkdir>
+		<mkdir dir="${js-ui.dir}/ds/css"></mkdir>
+		<mkdir dir="${js-ui.dir}/modernWatchList"></mkdir>
+		<mkdir dir="${js-ui.dir}/modernWatchList/js"></mkdir>
+		<mkdir dir="${js-ui.dir}/modernWatchList/css"></mkdir>
+
+		<!-- -->
+		<mkdir dir="${src-js-ui.dir}/css/"></mkdir>
+		<mkdir dir="${src-js-ui.dir}/js/"></mkdir>
+		<mkdir dir="${src-js-ui.dir}/fonts/"></mkdir>
+
+		<!-- copy content for app -->
+		<copy includeemptydirs="false" todir="${js-ui.dir}/app/css" taskname="copy app css">
+			<fileset dir="${src-js-ui.dir}/css/">
+				<include name="app.css"/>
+				<include name="chunk-vendors.css"/>
+			</fileset>
+		</copy>
+
+		<copy includeemptydirs="false" todir="${js-ui.dir}/app/js" taskname="copy app.js">
+			<fileset dir="${src-js-ui.dir}/js/">
+				<include name="app.js"/>
+				<include name="chunk-vendors.js"/>
+			</fileset>
+		</copy>
+
+		<copy includeemptydirs="false" todir="${js-ui.dir}/app/fonts" taskname="copy app.js">
+			<fileset dir="${src-js-ui.dir}/fonts/">
+				<include name="glyphicons-halflings-regular.eot"/>
+				<include name="glyphicons-halflings-regular.ttf"/>
+				<include name="glyphicons-halflings-regular.woff"/>
+				<include name="glyphicons-halflings-regular.woff2"/>
+				<include name="materialdesignicons-webfont.eot"/>
+				<include name="materialdesignicons-webfont.ttf"/>
+				<include name="materialdesignicons-webfont.woff"/>
+				<include name="materialdesignicons-webfont.woff2"/>
+				<include name="Roboto-Black.woff"/>
+				<include name="Roboto-Black.woff2"/>
+				<include name="Roboto-BlackItalic.woff"/>
+				<include name="Roboto-BlackItalic.woff2"/>
+				<include name="Roboto-Bold.woff"/>
+				<include name="Roboto-Bold.woff2"/>
+				<include name="Roboto-BoldItalic.woff"/>
+				<include name="Roboto-BoldItalic.woff2"/>
+				<include name="Roboto-Light.woff"/>
+				<include name="Roboto-Light.woff2"/>
+				<include name="Roboto-LightItalic.woff"/>
+				<include name="Roboto-LightItalic.woff2"/>
+				<include name="Roboto-Medium.woff"/>
+				<include name="Roboto-Medium.woff2"/>
+				<include name="Roboto-MediumItalic.woff"/>
+				<include name="Roboto-MediumItalic.woff2"/>
+				<include name="Roboto-Regular.woff"/>
+				<include name="Roboto-Regular.woff2"/>
+				<include name="Roboto-ReqularItalic.woff"/>
+				<include name="Roboto-ReqularItalic.woff2"/>
+				<include name="Roboto-Thin.woff"/>
+				<include name="Roboto-Thin.woff2"/>
+				<include name="Roboto-ThinItalic.woff"/>
+				<include name="Roboto-ThinItalic.woff2"/>
+			</fileset>
+		</copy>
+
+		<!-- copy content for views -->
+		<copy includeemptydirs="false" todir="${js-ui.dir}/views/css" taskname="copy for views css">
+			<fileset dir="${src-js-ui.dir}/css/">
+				<include name="cmp-component.css"/>
+			</fileset>
+		</copy>
+		<copy includeemptydirs="false" todir="${js-ui.dir}/views/js" taskname="copy for views js">
+			<fileset dir="${src-js-ui.dir}/js/">
+				<include name="cmp-component.js"/>
+				<include name="isalive-component.js"/>
+				<include name="simple-component-svg.js"/>
+				<include name="test-component.js"/>
+			</fileset>
+		</copy>
+
+		<!-- copy content for ds (data source) -->
+		<copy includeemptydirs="false" todir="${js-ui.dir}/ds/css" taskname="copy for ds css">
+			<fileset dir="${src-js-ui.dir}/css/">
+				<include name="sleep-and-reactivation-ds-component.css"/>
+			</fileset>
+		</copy>
+
+		<copy includeemptydirs="false" todir="${js-ui.dir}/ds/js" taskname="copy for ds js">
+			<fileset dir="${src-js-ui.dir}/js/">
+				<include name="sleep-and-reactivation-ds-component.js"/>
+			</fileset>
+		</copy>
+
+		<!-- copy content for ph -->
+		<copy includeemptydirs="false" todir="${js-ui.dir}/pointHierarchy/js" taskname="copy for ph js">
+			<fileset dir="${src-js-ui.dir}/js/">
+				<include name="ph.js"/>
+			</fileset>
+		</copy>
+
+		<!-- copy content for modern watch list chart -->
+		<copy includeemptydirs="false" todir="${js-ui.dir}/modernWatchList/js" taskname="copy for mwl js">
+			<fileset dir="${src-js-ui.dir}/js/">
+				<include name="example-chart-cmp.js"/>
+				<include name="xlsx.js"/>
+				<include name="pdfmake.js"/>
+				<include name="canvg.js"/>
+			</fileset>
+		</copy>
+
+		<!-- copy content for modern charts -->
+		<copy includeemptydirs="false" todir="${js-ui.dir}/views/js" taskname="copy for charts js">
+			<fileset dir="${src-js-ui.dir}/js/">
+				<include name="step-line-chart-component.js"/>
+			</fileset>
+		</copy>
+
+		<copy includeemptydirs="false" todir="${js-ui.dir}/views/js" taskname="copy for live-alarms js">
+			<fileset dir="${src-js-ui.dir}/js/">
+				<include name="live-alarms-component.js"/>
+			</fileset>
+		</copy>
+
+		<!-- font do zrobienia -->
+		<!-- img do zrobienia -->
+
+		<delete dir="${web.classes.dir}"/>
+		<mkdir dir="${web.classes.dir}"/>
+		<copy includeemptydirs="false" todir="${web.classes.dir}">
+			<fileset dir="${build-project.src.dir}">
+				<include name="**/*.class"/>
+			</fileset>
+		</copy>
+
+		<copy includeemptydirs="false" todir="${web.classes.dir}">
+			<fileset dir="${webapp-resources.dir}" />
+		</copy>
+
+		<war destfile="ScadaBR.war"
+			 basedir="WebContent"
+			 needxmlfile="false">
+		</war>
+		<record action="stop" name="${war.log.name}"/>
+	</target>
+
 	<target name="junit">
 		<record action="start" name="${junit.log.name}"/>
 		<junit printsummary="yes" haltonfailure="no">
