@@ -247,6 +247,9 @@
 		<pathelement location="WebContent/WEB-INF/lib/modbus4j-2.0.2.jar"/>
 		<path refid="Apache Tomcat v7.0 [Apache Tomcat v7.0].libraryclasspath"/>
 	</path>
+	<path id="datasource_libraries">
+		<pathelement location="WebContent/WEB-INF/lib/amqp-client-5.12.0.jar"/>
+	</path>
 	<target name="init" depends="clean">
 		<mkdir dir="${build-project.dir}"/>
 		<mkdir dir="${build-project.src.dir}"/>
@@ -278,6 +281,7 @@
 		<javac debug="true" debuglevel="${debuglevel}" destdir="${build-project.src.dir}" includeantruntime="false" source="${source}" target="${target}">
 			<src path="src"/>
 			<classpath refid="scadabr-1.1.0-RC.classpath"/>
+			<classpath refid="datasource_libraries"/>
 		</javac>
 		<record action="stop" name="${build-project.log.src.name}"/>
 		<record action="start" name="${build-project.log.test.name}"/>

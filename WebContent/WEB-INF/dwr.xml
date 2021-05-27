@@ -225,6 +225,11 @@
     <convert converter="enum" match="com.serotonin.MBusAddressing" />
     
     <!-- End MBus4J stuff-->
+
+    <!-- AMQP stuff -->
+    <convert converter="enum" match="org.scada_lts.ds.amqp.ExchangeType" />
+    <convert converter="enum" match="org.scada_lts.ds.amqp.DurabilityType" />
+    <convert converter="enum" match="org.scada_lts.ds.amqp.MessageAckType" />
     
     <!-- EnhancedImageChart -->
     <convert converter="enum" match="com.serotonin.mango.view.component.EnhancedImageChartType"/>

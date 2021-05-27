@@ -1,0 +1,104 @@
+<!--
+SoftQ - http://www.softq.pl/
+Copyright (C) 2018 Softq
+@author Radek Jajko
+-->
+<h1>Overview</h1>
+<p>Points within RabbitMQ AMQP DataSource generate data based on the received messages from RabbitMQ queue</p>
+<p>Attributes common to all AMQP data point are:
+<ul>
+    <li><b>Name: </b>the name of the point for use as an identifier in lists of points.</li>
+    <li><b>Data type: </b>the data type of the point. See below for details.</li>
+    <li><b>Exchange Type: </b>one of the types in which ScadaLTS receive messages from the broker</li>
+</ul></p>
+<h2>Exchanges</h2>
+<p>Exchange is an AMQP entitle which define how to route the message into zero or more queues. This
+    procedure divers within various exchange types. Each exchange has separate attributes like: Name, Durability or Auto-delete.
+    <b>Durable exchange</b> survive broker restart, but <b>Transient</b> do not - they have to be redeclared when broker comes back online.
+    Below are described different exchange types with example usage and configuration.</p>
+
+<h2>Default Exchange ("Empty")</h2>
+<h4>About:</h4>
+<p>This is a kind of direct exchange with empty name of it. It used the default exchange declared
+    by the broker. It is very simple to define that exchange - very useful for non-complex implementations.
+    Is has queues which are bound to it with the routing key that match queue name</p>
+<h4>Usage example:</h4>
+<p>Receive temperature data from your Raspberry PI</p>
+<h4>Configuration:</h4>
+<p>Assume that your PI sends every five seconds simple numeric data from a temperature sensor to your RabbitMQ broker
+    to default exchange (name = "") to queue called "Living_room_temperature".</p>
+<p>Assume also that you have pre-configured DataSource with filled IP Address, port and Virtual Host fields
+<ol>
+    <li>Create a new Data Point with name "Temperature LivingRoom sensor"</li>
+    <li>Select data type as "Numeric" - because PI sends simple numeric values</li>
+    <li>Select exchange type as "Empty" - use simplest option to create data point</li>
+    <li>Enter a rabbitMQ Queue Name "Living_room_temperature" (the same on which Raspberry sends a messages)</li>
+    <li>Select Queue Durability to "Durable" and Ack Mode to "No ACK" (make sure that your queue in broker is also durable)</li>
+    <li>Save Data Point and enable it and enable Data Source</li>
+    <li>Open watch list to see incoming values from your device</li>
+</ol>
+</p>
+
+<h2>Direct Exchange</h2>
+<h4>About:</h4>
+<p>This type of exchanges delivers messages to queues according to the message routing key.</p>
+<h4>Usage example:</h4>
+<p>Receive messages from different news feeds</p>
+<h4>Configuration:</h4>
+<p>Assume that RabbitMQ broker receive from different sources (like "sport", "events", "music") messages data with latest news from
+    the world to exchange called "news". We can also receive the same messages kind on the other exchange called "local_news".</p>
+<ol>
+    <li>Create first Data Point with name "WorldNews - sport"</li>
+    <li>Select data type as "Alphanumeric"</li>
+    <li>Select exchange type as "Direct"</li>
+    <li>Enter a RabbitMQ Exchange Name "news"</li>
+    <li>Enter a routing key "sport" - which kind of messages we want to receive.</li>
+    <li>Select Queue Durability to "Durable" and Ack Mode to "No ACK" (make sure that your queue in broker is also durable)</li>
+    <li>Save Data Point</li>
+    <li>Create second Data Point with name "WorldNews - events" and repeat steps (2, 3 and 4)</li>
+    <li>Enter a routing key "events"</li>
+    <li>Save Data Point and enable all than enable Data Source</li>
+    <li>Open watch list to see incoming values from your device</li>
+</ol>
+
+<h2>Topic Exchange</h2>
+<h4>About:</h4>
+<p>This type is similar to direct one but has one improvement - pattern matching. This exchange can
+    route the messages based on matching routing key and the pattern that was used to bind a queue
+    to an exchange. It has a board set of use cases form distributing relevant data to specific
+    geographic location, stock price updates, logging routing and much more.</p>
+<p>
+<ul>
+    <li>* (star) can substitute for exactly one word.</li>
+    <li># (hash) can substitute for zero or more words.</li>
+</ul>
+
+</p>
+<h4>Usage example:</h4>
+<p>Receive specific logs from production environment</p>
+<h4>Configuration:</h4>
+<p>Assume that RabbitMQ broker receive data from different applications in different levels of log
+    to exchange called "apps_logs".
+</p>
+<ol>
+    <li>Create first Data Point with name "ScadaLTS info"</li>
+    <li>Select data type as "Alphanumeric"</li>
+    <li>Select exchange type as "Topic"</li>
+    <li>Enter a RabbitMQ Exchange Name "apps_logs"</li>
+    <li>Enter a routing key "scada.info" - which kind of messages we want to receive.</li>
+    <li>Select Queue Durability to "Durable" and Ack Mode to "No ACK" (make sure that your queue in broker is also durable)</li>
+    <li>Save Data Point</li>
+    <li>Create second Data Point with name "ScadaDashboard - all" and repeat steps (2, 3 and 4)</li>
+    <li>Enter a routing key "scada_dashboard.*"</li>
+    <li>Save Data Point</li>
+    <li>Create third Data Point with name "all logs" and repeat steps (2, 3 and 4)</li>
+    <li>Enter a routing key "#"</li>
+    <li>Save Data Point and enable all than enable Data Source</li>
+    <li>Open watch list to see incoming values from your device</li>
+</ol>
+
+<h2>Fanout Exchange</h2>
+<h4>About:</h4>
+<p>This exchange type is similar to IP broadcast behaviour. Based on the exchange name we receive all data
+    from this exchange. This exchange routes messages to all of the queues that are bound to it and the
+    routing key is ignored.</p>

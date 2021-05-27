@@ -89,6 +89,8 @@ import com.serotonin.bacnet4j.type.constructed.Address;
 import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 import com.serotonin.db.IntValuePair;
 import com.serotonin.io.StreamUtils;
+import org.scada_lts.ds.amqp.AmqpDataSourceVO;
+import org.scada_lts.ds.amqp.AmqpPointLocatorVO;
 import org.scada_lts.ds.model.ReactivationDs;
 import org.scada_lts.ds.reactivation.ReactivationManager;
 import org.scada_lts.modbus.SerialParameters;
@@ -429,6 +431,31 @@ public class DataSourceEditDwr extends DataSourceListDwr {
     @MethodFilter
     public DwrResponseI18n saveVirtualPointLocator(int id, String xid,
                                                    String name, VirtualPointLocatorVO locator) {
+        return validatePoint(id, xid, name, locator, null);
+    }
+
+    // AMQP Receiver //
+    @MethodFilter
+    public DwrResponseI18n saveAmqpDataSource(String name, String xid, int updatePeriods, int updatePeriodType, int updateAttempts,
+                                              String serverIpAddress, String serverPortNumber, String serverUsername, String serverPassword, String serverVirtualHost) {
+        AmqpDataSourceVO ds = (AmqpDataSourceVO) Common.getUser().getEditDataSource();
+
+        ds.setXid(xid);
+        ds.setName(name);
+        ds.setUpdatePeriods(updatePeriods);
+        ds.setUpdatePeriodType(updatePeriodType);
+        ds.setUpdateAttempts(updateAttempts);
+        ds.setServerIpAddress(serverIpAddress);
+        ds.setServerPortNumber(serverPortNumber);
+        ds.setServerVirtualHost(serverVirtualHost);
+        ds.setServerUsername(serverUsername);
+        ds.setServerPassword(serverPassword);
+
+        return tryDataSourceSave(ds);
+    }
+
+    @MethodFilter
+    public DwrResponseI18n saveAmqpPointLocator(int id, String xid, String name, AmqpPointLocatorVO locator){
         return validatePoint(id, xid, name, locator, null);
     }
 

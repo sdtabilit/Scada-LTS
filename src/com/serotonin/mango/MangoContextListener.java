@@ -237,7 +237,8 @@ public class MangoContextListener implements ServletContextListener {
 		ctx.setAttribute("constants.DataTypes.ALPHANUMERIC",
 				DataTypes.ALPHANUMERIC);
 		ctx.setAttribute("constants.DataTypes.IMAGE", DataTypes.IMAGE);
-
+		ctx.setAttribute("constants.DataSourceVO.Types.AMQP",
+				DataSourceVO.Type.AMQP.getId());
 		ctx.setAttribute("constants.DataSourceVO.Types.VIRTUAL",
 				DataSourceVO.Type.VIRTUAL.getId());
 		ctx.setAttribute("constants.DataSourceVO.Types.MODBUS_SERIAL",

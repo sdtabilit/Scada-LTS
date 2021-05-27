@@ -1,0 +1,69 @@
+<!--
+SoftQ - http://www.softq.pl/
+Copyright (C) 2018 Softq
+@author Radek Jajko
+-->
+<p>AMQP v0.9.1 Data Source is a data source which allows to connect to external RabbitMQ instance via AMQP protocol</p>
+<p>AMQP (Advanced Message Queuing Protocol) is an Open Standard for messaging between different platforms
+    in different languages in middleware.</p>
+<p>Some technical information:
+<ul>
+    <li><b>Protocol version:</b> 0.9.1</li>
+    <li><b>Dedicated Broker:</b> RabbitMQ</li>
+</ul>
+</p>
+<h4>After data point change - remember to reconnect the DataSource<br>Click on: Disable and Enable button</h4>
+<h2>Usage:</h2>
+<p>AMQP Data Source can be useful in a number of ways.<br>For example:
+<ul>
+    <li>Receiving data queued in the broker from IoT Devices</li>
+    <li>It can receive logs messages from different devices which produce logs to specific topic</li>
+    <li>To keep up-to-date with the news sending to the broker</li>
+</ul></p>
+<h2>Why v0.9.1?</h2>
+<p>
+    ScadaLTS has implemented AMQP protocol in version 0.9.1 because of a few reasons. Firstly official
+    AMQP 1.0 OASIS protocol it is very different from the 0.9.1 version. AMQP 1.0 imposes fewer semantic
+    requirements, so it is easier to add suppor for AMQP 1.0 existing brokers but the protocol is
+    more complex than 0.9.1 and there are fewer client implementations.
+</p>
+<p>
+    RabbitMQ support 0.9.1 version by sharing the package called com.rabbitmq.client which contains
+    all necessary Java classes to communicate within devices by this protocol version. It has also
+    great tutorials, guides and easy API to start programming. So based on the popularity of the
+    community we have chosen this version.
+</p>
+
+<h2>Configuration</h2>
+<p>Each AMQP Receiver Data Source require some parameters:
+<ul>
+    <li><b>Name</b> - Data Source unique display name</li>
+    <li><b>Server IP Address</b> - IP address of the broker to which we want to connect</li>
+    <li><b>Server Port</b> - Port on which the broker listen to (default = 5672)</li>
+</ul>
+</p>
+<p>There are also some optional parameters:
+<ul>
+    <li><b>RabbitMQ username</b> - username required to login into the broker</li>
+    <li><b>RabbitMQ user password</b> - username password required to authenticate the user</li>
+    <li><b>Virtual Host</b> - Virtual host of the broker instance. In the single machine there could be more than one virtual machines. (default = "/")</li>
+</ul>
+</p>
+<h2>Extras</h2>
+<p>
+    From <a href="https://github.com/SCADA-LTS/Scada-LTS">official repository</a> there are some mini-applications
+    which allow user to test the connectivity between ScadaLTS and other remote systems. There are two python 2.7 scripts
+    (Producer - sendRabbitMQ.py and Consumer - recvRabbitMQ.py) which can be configured to produce data to your ScadaLTS
+    Consumer can also receive data sent from Scada if it is bind to proper exchange with required routing key. To run this
+    scripts there is required "pika" library which can be installed from the Internet. You can do it very simple just open your CommandLine
+    and type 'pip install pika' and wait for the end.
+</p>
+<p>
+    Script files are located in directory: <b>doc/examples/datasource/amqp</b></br>
+    Example code:</br>
+    <code>python sendRabbitMQ.py direct -e scadalts 12.34</code>
+</p>
+<p>
+    ScadaLTS can also send a messages to related queue. It is as simple as it was for other DataPoint. Just open "watch list" menu
+    select wrench button, type a new message which you want to send, and press link [send]. You can check your message on the other device.
+</p>

@@ -384,6 +384,14 @@
     <relation id="radiuinoDS"/>
    </item>
 
+  <item id="amqpPP">
+    <relation id="amqpPP"/>
+  </item>
+
+  <item id="amqpDS">
+    <relation id="amqpDS"/>
+  </item>
+
     <item id="collectInactiveMsg">
         <relation id="emailSettings"/>
         <relation id="eventHandlers"/>

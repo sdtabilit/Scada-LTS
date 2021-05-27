@@ -360,6 +360,10 @@
 			<jsp:include page="dataSourceEdit/editVirtual.jsp" />
 		</c:when>
 		<c:when
+            test="${dataSource.type.id == applicationScope['constants.DataSourceVO.Types.AMQP']}">
+            <jsp:include page="dataSourceEdit/editAmqp.jsp"/>
+        </c:when>
+		<c:when
 			test="${dataSource.type.id == applicationScope['constants.DataSourceVO.Types.MODBUS_SERIAL']}">
 			<jsp:include page="dataSourceEdit/editModbus.jsp" />
 		</c:when>
