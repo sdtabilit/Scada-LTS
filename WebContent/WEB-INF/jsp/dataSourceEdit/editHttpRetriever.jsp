@@ -33,23 +33,83 @@
   // when end of load get data from model and set in editHttpRetriver
 
   // share data old ui and new ui in vuejs
+  var staticHeaderList = new Array();
 
-      var editDSNewUI = {
-        id: ${dataSource.id},
-        stop: ${dataSource.stop},
-        reactivation: {
-          sleep: ${dataSource.reactivation.sleep},
-          type: ${dataSource.reactivation.type}, // 0-"Minute" 1-"Hour", 2-"Day"
-          value: ${dataSource.reactivation.value}
-        }
+  var editDSNewUI = {
+    id: ${dataSource.id},
+    stop: ${dataSource.stop},
+    reactivation: {
+      sleep: ${dataSource.reactivation.sleep},
+      type: ${dataSource.reactivation.type}, // 0-"Minute" 1-"Hour", 2-"Day"
+      value: ${dataSource.reactivation.value}
+    }
+  }
+
+  function initImpl() {
+    DataSourceEditDwr.initHttpRetriever(initRetriever);
+  }
+
+  function initRetriever(response) {
+    var i;
+    var list = response.data.staticHeaders;
+    for (i=0; i<list.length; i++)
+      staticHeaderList[staticHeaderList.length] = {key: list[i].key, value: list[i].value};
+    refreshStaticHeaderList();
+    DataSourceEditDwr.getBasicCredentials(list, setCredentials);
+  }
+
+  function addStaticHeader() {
+    var key = $get("sheaderKey");
+    var value = $get("sheaderValue");
+
+    if (!key || key.trim().length == 0) {
+      alert("<fmt:message key="publisherEdit.httpSender.keyRequired"/>");
+      return;
+    }
+
+    for (var i=0; i<staticHeaderList.length; i++) {
+      if (staticHeaderList[i].key == key) {
+        alert("<fmt:message key="publisherEdit.httpSender.keyExists"/>: '"+ key +"'");
+        return;
       }
+    }
 
+    staticHeaderList[staticHeaderList.length] = {key: key, value: value};
+    staticHeaderList.sort();
+    refreshStaticHeaderList();
+  }
+
+  function removeStaticHeader(index) {
+    staticHeaderList.splice(index, 1);
+    refreshStaticHeaderList();
+  }
+
+  function refreshStaticHeaderList() {
+    dwr.util.removeAllRows("staticHeaderList");
+    if (staticHeaderList.length == 0)
+      show("noStaticHeadersMsg");
+    else {
+      hide("noStaticHeadersMsg");
+      dwr.util.addRows("staticHeaderList", staticHeaderList, [
+        function(data) { return data.key +"="+ data.value; },
+        function(data, options) {
+          return "<img src='images/bullet_delete.png' class='ptr' title='<fmt:message key="dsEdit.httpRetriever.removeHeader"/>' "+
+                  "onclick='removeStaticHeader("+ options.rowIndex + ");'/>";
+        }
+      ], null);
+    }
+  }
+
+  function setCredentials(credentials) {
+    $set("username", credentials[0]);
+    $set("password", credentials[1]);
+  }
 
   function testValueParams() {
       startImageFader("valueTestImg", true);
       hide("valueTestRow");
       DataSourceEditDwr.testHttpRetrieverValueParams($get("url"), $get("timeoutSeconds"), $get("retries"),
-              $get("valueRegex"), $get("dataTypeId"), $get("valueFormat"), testValueParamsCB);
+              $get("valueRegex"), $get("dataTypeId"), $get("valueFormat"), staticHeaderList, testValueParamsCB);
   }
   
   function testValueParamsCB(result) {
@@ -62,7 +122,7 @@
       startImageFader("timeTestImg", true);
       hide("timeTestRow");
       DataSourceEditDwr.testHttpRetrieverTimeParams($get("url"), $get("timeoutSeconds"), $get("retries"),
-              $get("timeRegex"), $get("timeFormat"), testTimeParamsCB);
+              $get("timeRegex"), $get("timeFormat"), staticHeaderList, testTimeParamsCB);
   }
   
   function testTimeParamsCB(result) {
@@ -74,7 +134,7 @@
   function saveDataSourceImplOld(){
   DataSourceEditDwr.saveHttpRetrieverDataSource($get("dataSourceName"), $get("dataSourceXid"),
                 $get("updatePeriods"), $get("updatePeriodType"), $get("url"), $get("timeoutSeconds"), $get("retries"),
-                $get("stop"),
+                $get("stop"), $get("username"), $get("password"),
                 saveDataSourceCB);
   }
 
@@ -91,8 +151,21 @@
                   editDSNewUI.reactivation.sleep,
                   editDSNewUI.reactivation.type,
                   editDSNewUI.reactivation.value,
+                  $get("username"),
+                  $get("password"),
                   saveDataSourceCB
       );
+  }
+
+  function openURL() {
+    var url = $get('url');
+    if ($get("username") && $get("password")) {
+      var urlParts = url.split("://", 2);
+      if (urlParts.length === 2) {
+        url = urlParts[0] + "://" + $get("username") + ":" + $get("password") + "@" + urlParts[1];
+      }
+    }
+    window.open(url, 'httpRetrieverTarget');
   }
 
   function appendPointListColumnFunctions(pointListColumnHeaders, pointListColumnFunctions) {
@@ -167,7 +240,28 @@
           <td class="formLabelRequired"><fmt:message key="dsEdit.httpRetriever.url"/></td>
           <td class="formField">
             <input id="url" type="text" value="${dataSource.url}" class="formLong"/>
-            <tag:img png="bullet_go" onclick="window.open($get('url'), 'httpRetrieverTarget')" title="dsEdit.httpRetriever.openUrl"/>
+            <tag:img png="bullet_go" onclick="openURL()" title="dsEdit.httpRetriever.openUrl"/>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="formLabelRequired"><fmt:message key="publisherEdit.httpSender.staticHeaders"/></td>
+          <td class="formField">
+            <fmt:message key="publisherEdit.httpSender.headerKey"/> <input type="text" id="sheaderKey" class="formShort"/>
+            <fmt:message key="publisherEdit.httpSender.headerValue"/> <input type="text" id="sheaderValue" class="formShort"/>
+            <tag:img png="add" title="publisherEdit.httpSender.addStaticHeader" onclick="addStaticHeader()"/>
+            <table>
+              <tr id="noStaticHeadersMsg" style="display:none"><td><fmt:message key="publisherEdit.httpSender.noStaticHeaders"/></td></tr>
+              <tbody id="staticHeaderList"></tbody>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="formLabelRequired"><fmt:message key="dsEdit.httpRetriever.credentials"/></td>
+          <td class="formField">
+            <fmt:message key="dsEdit.httpRetriever.username"/> <input type="text" id="username" class="formShort"/>
+            <fmt:message key="dsEdit.httpRetriever.password"/> <input type="password" id="password" class="formShort"/>
           </td>
         </tr>
         

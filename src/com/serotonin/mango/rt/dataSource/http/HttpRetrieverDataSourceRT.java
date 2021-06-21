@@ -18,6 +18,7 @@
  */
 package com.serotonin.mango.rt.dataSource.http;
 
+import com.serotonin.db.KeyValuePair;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -41,6 +42,8 @@ import org.scada_lts.ds.reactivation.ReactivationManager;
 import org.scada_lts.ds.reactivation.ReactivationConnectHttpRetriever;
 import org.scada_lts.ds.state.SleepStateDs;
 import org.scada_lts.ds.state.StopChangeEnableStateDs;
+
+import java.util.List;
 
 /**
  * @author Matthew Lohbihler
@@ -74,7 +77,7 @@ public class HttpRetrieverDataSourceRT extends PollingDataSource {
     protected void doPoll(long time) {
         String data;
         try {
-            data = getData(vo.getUrl(), vo.getTimeoutSeconds(), vo.getRetries(), vo.isStop(), vo.getReactivation());
+            data = getData(vo.getUrl(), vo.getTimeoutSeconds(), vo.getRetries(), vo.isStop(), vo.getReactivation(), vo.getStaticHeaders());
         } catch (Exception e) {
             LocalizableMessage lm;
             if (e instanceof LocalizableException)
@@ -122,14 +125,27 @@ public class HttpRetrieverDataSourceRT extends PollingDataSource {
             returnToNormal(PARSE_EXCEPTION_EVENT, time);
     }
 
-    public static boolean testConnection(String url, int timeoutSeconds, int retries) {
+    private static GetMethod createMethodForClient(String url, List<KeyValuePair> staticHeaders) {
+        GetMethod method = new GetMethod(url);
+        if (!staticHeaders.isEmpty()) {
+            for (KeyValuePair kvp : staticHeaders) {
+                if (kvp.getKey().equals("Authorization")) {
+                    method.setDoAuthentication(true);
+                    method.addRequestHeader(kvp.getKey(), kvp.getValue());
+                }
+            }
+        }
+        return method;
+    }
+
+    public static boolean testConnection(String url, int timeoutSeconds, int retries, List<KeyValuePair> staticHeaders) {
         String data = "";
         for (int i = 0; i <= retries; i++) {
             HttpClient client = Common.getHttpClient(timeoutSeconds * 1000);
             GetMethod method = null;
             LocalizableMessage message;
             try {
-                method = new GetMethod(url);
+                method = createMethodForClient(url, staticHeaders);
                 int responseCode = client.executeMethod(method);
                 if (responseCode == HttpStatus.SC_OK) {
                     data = HttpUtils.readResponseBody(method, READ_LIMIT);
@@ -146,14 +162,14 @@ public class HttpRetrieverDataSourceRT extends PollingDataSource {
         return false;
     }
 
-    public String getData(String url, int timeoutSeconds, int retries, boolean stop, ReactivationDs r) throws LocalizableException {
+    public String getData(String url, int timeoutSeconds, int retries, boolean stop, ReactivationDs r, List<KeyValuePair> staticHeaders) throws LocalizableException {
         String data = "";
         for (int i = 0; i <= retries; i++) {
             HttpClient client = Common.getHttpClient(timeoutSeconds * 1000);
             GetMethod method = null;
             LocalizableMessage message;
             try {
-                method = new GetMethod(url);
+                method = createMethodForClient(url, staticHeaders);
                 int responseCode = client.executeMethod(method);
                 if (responseCode == HttpStatus.SC_OK) {
                     data = HttpUtils.readResponseBody(method, READ_LIMIT);
@@ -184,7 +200,7 @@ public class HttpRetrieverDataSourceRT extends PollingDataSource {
     }
 
     @Deprecated
-    public static String getData(String url, int timeoutSeconds, int retries) throws LocalizableException {
+    public static String getData(String url, int timeoutSeconds, int retries, List<KeyValuePair> staticHeaders) throws LocalizableException {
         // Try to get the data.
         String data;
         while (true) {
@@ -193,7 +209,7 @@ public class HttpRetrieverDataSourceRT extends PollingDataSource {
             LocalizableMessage message;
 
             try {
-                method = new GetMethod(url);
+                method = createMethodForClient(url, staticHeaders);
                 int responseCode = client.executeMethod(method);
                 if (responseCode == HttpStatus.SC_OK) {
                     data = HttpUtils.readResponseBody(method, READ_LIMIT);

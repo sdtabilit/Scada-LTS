@@ -37,7 +37,7 @@ public class ReactivationConnectHttpRetriever implements StatefulJob {
 
         HttpRetrieverDataSourceVO hrds = (HttpRetrieverDataSourceVO) ds;
 
-        if (HttpRetrieverDataSourceRT.testConnection(hrds.getUrl(), hrds.getTimeoutSeconds(), hrds.getRetries())) {
+        if (HttpRetrieverDataSourceRT.testConnection(hrds.getUrl(), hrds.getTimeoutSeconds(), hrds.getRetries(), hrds.getStaticHeaders())) {
 
             try {
                 jobExecutionContext.getScheduler().deleteJob(keyJob.getName(), keyJob.getGroup());
