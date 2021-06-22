@@ -50,6 +50,17 @@
       for (i=0; i<list.length; i++)
           addToSelectedArray(list[i].dataPointId, list[i].parameterName, list[i].includeTimestamp);
       refreshSelectedPoints();
+      PublisherEditDwr.getBasicCredentials(staticHeaderList, setCredentials);
+      PublisherEditDwr.getIsUseJSON(setUseJSON);
+  }
+
+  function setCredentials(credentials) {
+      $set("username", credentials[0]);
+      $set("password", credentials[1]);
+  }
+
+  function setUseJSON(useJSON) {
+      $set("useJSON", useJSON);
   }
   
   function addStaticHeader() {
@@ -246,7 +257,8 @@
       
       PublisherEditDwr.saveHttpSender(name, xid, enabled, points, $get("url"), $get("usePost") == "true", 
     		  staticHeaderList, staticParameterList, cacheWarningSize, changesOnly, $get("raiseResultWarning"),
-    		  $get("dateFormat"), sendSnapshot, snapshotSendPeriods, snapshotSendPeriodType, savePublisherCB);
+    		  $get("dateFormat"), sendSnapshot, snapshotSendPeriods, snapshotSendPeriodType,
+              $get("username"), $get("password"), $get("useJSON"), savePublisherCB);
   }
   
   function httpSendTest() {
@@ -311,12 +323,25 @@
               </sst:select>
             </td>
           </tr>
+
+          <tr>
+            <td class="formLabelRequired"><fmt:message key="publisherEdit.httpSender.useJSON"/></td>
+            <td class="formField"><sst:checkbox id="useJSON" /></td>
+          </tr>
           
           <tr>
             <td class="formLabelRequired"><fmt:message key="publisherEdit.httpSender.url"/></td>
             <td class="formField">
               <input type="text" id="url" value="${publisher.url}" class="formLong"/>
               <div id="urlMsg" class="formError" style="display:none;"></div>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="formLabelRequired"><fmt:message key="publisherEdit.httpSender.credentials"/></td>
+            <td class="formField">
+              <fmt:message key="publisherEdit.httpSender.username"/> <input type="text" id="username" class="formShort"/>
+              <fmt:message key="publisherEdit.httpSender.password"/> <input type="password" id="password" class="formShort"/>
             </td>
           </tr>
           

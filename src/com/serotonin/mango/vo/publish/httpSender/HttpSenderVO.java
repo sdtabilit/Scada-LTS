@@ -246,4 +246,8 @@ public class HttpSenderVO extends PublisherVO<HttpPointVO> {
                         DATE_FORMAT_CODES.getCodeList());
         }
     }
+
+    public boolean isUseJSON() {
+        return staticHeaders.stream().anyMatch(o -> (o.getKey().equals("Content-Type") && o.getValue().equals("application/json")));
+    }
 }

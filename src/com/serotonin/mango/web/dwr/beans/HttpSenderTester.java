@@ -30,6 +30,7 @@ import com.serotonin.db.KeyValuePair;
 import com.serotonin.mango.Common;
 import com.serotonin.mango.rt.publish.httpSender.HttpSenderRT;
 import com.serotonin.web.http.HttpUtils;
+import org.apache.commons.httpclient.methods.StringRequestEntity;
 
 /**
  * @author Matthew Lohbihler
@@ -57,6 +58,14 @@ public class HttpSenderTester extends Thread implements TestingUtility {
         if (usePost) {
             PostMethod post = new PostMethod(url);
             post.addParameters(convertToNVPs(staticParameters));
+            if (staticHeaders.stream().filter(o -> o.getKey().equals("Content-Type")).findAny().filter(o -> o.getValue().equals("application/json")).isPresent()) {
+                try {
+                    post.setRequestEntity(new StringRequestEntity("{}", "application/json", "utf-8"));
+                } catch (Exception e) {
+                    result = "ERROR: " + e.getMessage();
+                    return;
+                }
+            }
             method = post;
         }
         else {
@@ -67,6 +76,9 @@ public class HttpSenderTester extends Thread implements TestingUtility {
 
         // Add a recognizable header
         method.addRequestHeader("User-Agent", HttpSenderRT.USER_AGENT);
+
+        if (staticHeaders.stream().anyMatch(o -> o.getKey().equals("Authorization")))
+            method.setDoAuthentication(true);
 
         // Add the user-defined headers.
         for (KeyValuePair kvp : staticHeaders)
