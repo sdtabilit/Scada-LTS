@@ -35,6 +35,7 @@ import com.serotonin.mango.rt.dataSource.meta.MetaDataSourceRT;
 import com.serotonin.mango.rt.dataSource.meta.MetaPointLocatorRT;
 import com.serotonin.mango.rt.dataSource.meta.ScriptExecutor;
 import com.serotonin.mango.vo.DataPointVO;
+import com.serotonin.mango.vo.User;
 import com.serotonin.mango.vo.dataSource.DataSourceVO;
 import com.serotonin.mango.vo.dataSource.meta.MetaDataSourceVO;
 import com.serotonin.mango.vo.dataSource.meta.MetaPointLocatorVO;
@@ -617,7 +618,7 @@ public class PointValueService implements MangoPointValues, MangoPointValuesWith
         return PointValueDAO.getInstance().deletePointValuesWithMismatchedType(dataPointId, dataType);
     }
 
-    public void updateMetaDataPointByScript(String xid) {
+    public void updateMetaDataPointByScript(User user, String xid) {
         try {
             DataPointVO dataPoint = dataPointService.getDataPoint(xid);
             MetaDataSourceVO metaDataSourceVO = (MetaDataSourceVO) dataSourceService.getDataSource(dataPoint.getDataSourceXid());
@@ -665,26 +666,26 @@ public class PointValueService implements MangoPointValues, MangoPointValuesWith
                     break;
             }
 
-            dataPointService.save(value, dataPoint.getXid(), metaPointLocatorVO.getDataTypeId());
+            dataPointService.save(user, value, dataPoint.getXid(), metaPointLocatorVO.getDataTypeId());
         } catch (Exception e) {
             //
         }
     }
 
-    public void updateAllMetaDataPointsFromDatasourceByScript(String dataSourceXid) {
+    public void updateAllMetaDataPointsFromDatasourceByScript(User user, String dataSourceXid) {
         DataSourceVO dataSource = dataSourceService.getDataSource(dataSourceXid);
 
         if (dataSource.getType().getId() == DataSourceVO.Type.META.getId()) {
             List<DataPointVO> dataPoints = dataPointService.getDataPoints(dataSource.getId(), null);
             for (DataPointVO dp : dataPoints) {
-                updateMetaDataPointByScript(dp.getXid());
+                updateMetaDataPointByScript(user, dp.getXid());
             }
         } else {
             throw new RuntimeException("Wrong data source type. Expected meta data source. Found " + dataSource.getType().toString());
         }
     }
 
-    public void updateAllMetaDataPointsByScript() {
+    public void updateAllMetaDataPointsByScript(User user) {
         List<DataPointVO> metaDataPoints = new ArrayList<>();
 
 
@@ -695,7 +696,7 @@ public class PointValueService implements MangoPointValues, MangoPointValuesWith
 
         metaDataPoints
                 .stream()
-                .forEach(dp -> updateMetaDataPointByScript(dp.getXid()));
+                .forEach(dp -> updateMetaDataPointByScript(user, dp.getXid()));
 
     }
 
