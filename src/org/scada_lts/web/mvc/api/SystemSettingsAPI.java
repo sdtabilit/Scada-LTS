@@ -7,6 +7,8 @@ import com.serotonin.mango.vo.User;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.scada_lts.mango.service.SystemSettingsService;
+import org.scada_lts.utils.SystemSettingsUtils;
+import org.scada_lts.utils.ValidationUtils;
 import org.scada_lts.web.mvc.api.json.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -498,6 +500,42 @@ public class SystemSettingsAPI {
             User user = Common.getUser(request);
             if (user != null && user.isAdmin()) {
                 return new ResponseEntity<>(systemSettingsService.getScadaConfig(), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+        } catch (Exception e) {
+            LOG.error(e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/getAggregateSettings", produces = "application/json")
+    public ResponseEntity<AggregateSettings> getAggregateSettings(HttpServletRequest request) {
+        LOG.info("/api/systemSettings/getAggregateSettings");
+        try {
+            User user = Common.getUser(request);
+            if (user != null && user.isAdmin()) {
+                return new ResponseEntity<>(systemSettingsService.getAggregateSettings(), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+        } catch (Exception e) {
+            LOG.error(e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping(value = "/saveAggregateSettings", consumes = "application/json")
+    public ResponseEntity<String> saveAggregateSettings(HttpServletRequest request, @RequestBody AggregateSettings aggregateSettings) {
+        LOG.info("/api/systemSettings/saveAggregateSettings");
+        try {
+            User user = Common.getUser(request);
+            if (user != null && user.isAdmin()) {
+                String errors = SystemSettingsUtils.validateAggregateSettings(aggregateSettings);
+                if(!errors.isEmpty())
+                    return ResponseEntity.badRequest().body(ValidationUtils.formatErrorsJson(errors));
+                systemSettingsService.saveAggregateSettings(aggregateSettings);
+                return new ResponseEntity<>(SAVED_MSG, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
             }

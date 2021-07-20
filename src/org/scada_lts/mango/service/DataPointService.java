@@ -46,6 +46,7 @@ import org.scada_lts.dao.watchlist.WatchListDAO;
 import org.scada_lts.mango.adapter.MangoDataPoint;
 import org.scada_lts.mango.adapter.MangoPointHierarchy;
 import org.scada_lts.service.pointhierarchy.PointHierarchyService;
+import org.scada_lts.web.mvc.api.AggregateSettings;
 import org.scada_lts.web.mvc.api.dto.PointValueDTO;
 import org.scada_lts.web.mvc.api.json.JsonBinaryEventTextRenderer;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -589,100 +590,87 @@ public class DataPointService implements MangoDataPoint {
 		return json;
 	}
 
-	public List<Map<String, Double>> getPointValuesFromRangeXid(String pointString, long startTs, long endTs) {
-		List<Integer> pointIds = getDataPointIdsByXid(pointString);
-		if(pointIds.isEmpty())
-			return Collections.emptyList();
-		if (withAggregation()) {
-			return pointValueAmChartDao.convertToAmChartDataObject(aggregateValuesFromRange(startTs, endTs, pointIds));
-		}
-		return pointValueAmChartDao.getPointValuesFromRange(pointIds.stream().mapToInt(i -> i).toArray(), startTs, endTs);
-	}
-
-	public List<Map<String, Double>> getPointValuesFromRangeId(String pointString, long startTs, long endTs) {
-		List<Integer> pointIds = getDataPointIds(pointString);
+	public List<Map<String, Double>> getPointValuesFromRange(List<DataPointVO> pointIds, long startTs, long endTs,
+															 AggregateSettings aggregateSettings) {
 		if (pointIds.isEmpty())
 			return Collections.emptyList();
-		if (withAggregation()) {
-			return pointValueAmChartDao.convertToAmChartDataObject(aggregateValuesFromRange(startTs, endTs, pointIds));
+		if (aggregateSettings.isEnabled()) {
+			return pointValueAmChartDao.convertToAmChartDataObject(aggregateValuesFromRange(startTs, endTs, pointIds, aggregateSettings));
 		}
-		return pointValueAmChartDao.getPointValuesFromRange(pointIds.stream().mapToInt(i -> i).toArray(), startTs, endTs);
+		return pointValueAmChartDao.getPointValuesFromRange(getPointIds(pointIds), startTs, endTs);
 	}
 
-	public List<Map<String, Double>> getPointValuesToCompareFromRangeXid(String pointString, long startTs, long endTs) {
-		List<Integer> pointIds = getDataPointIdsByXid(pointString);
-		if(pointIds.isEmpty())
+	public List<Map<String, Double>> getPointValuesToCompareFromRange(List<DataPointVO> dataPoints, long startTs, long endTs,
+																	  AggregateSettings aggregateSettings) {
+		if(dataPoints.isEmpty())
 			return Collections.emptyList();
-		if (withAggregation()) {
-			return pointValueAmChartDao.convertToAmChartCompareDataObject(aggregateValuesFromRange(startTs, endTs, pointIds), pointIds.get(0));
+		if (aggregateSettings.isEnabled()) {
+			return pointValueAmChartDao.convertToAmChartCompareDataObject(aggregateValuesFromRange(startTs, endTs, dataPoints, aggregateSettings), dataPoints.get(0).getId());
 		}
-		return pointValueAmChartDao.getPointValuesToCompareFromRange(pointIds.stream().mapToInt(i -> i).toArray(), startTs, endTs);
+		return pointValueAmChartDao.getPointValuesToCompareFromRange(getPointIds(dataPoints), startTs, endTs);
 	}
 
-	public List<Map<String, Double>> getPointValuesToCompareFromRangeId(String pointString, long startTs, long endTs) {
-		List<Integer> pointIds = getDataPointIds(pointString);
-		if(pointIds.isEmpty())
-			return Collections.emptyList();
-		if (withAggregation()) {
-			return pointValueAmChartDao.convertToAmChartCompareDataObject(aggregateValuesFromRange(startTs, endTs, pointIds), pointIds.get(0));
-		}
-		return pointValueAmChartDao.getPointValuesToCompareFromRange(pointIds.stream().mapToInt(i -> i).toArray(), startTs, endTs);
-	}
-
-    public List<DataPointVO> getDataPoints(List<Integer> pointIds) {
+    public List<DataPointVO> getDataPoints(Set<Integer> pointIds) {
         return pointIds.stream()
                 .map(a -> getDataPointOpt(a))
 				.filter(Optional::isPresent)
 				.map(Optional::get)
+				.peek(a -> {
+					if(a.getPointLocator() == null) {
+						LOG.warn(PointValueAmChartDAO.dataPointInfo(a));
+					}
+				})
+				.filter(a -> a.getPointLocator() != null)
                 .collect(Collectors.toList());
     }
 
-	private List<Integer> getDataPointIds(String pointString) {
-		List<Integer> pointIds = new ArrayList<>();
-		for(String id: pointString.split(",")) {
-			pointIds.add(Integer.parseInt(id));
+	public List<DataPointVO> getDataPointsByXid(Set<String> xids) {
+		List<DataPointVO> pointIds = new ArrayList<>();
+		for(String xid: xids) {
+			DataPointVO dataPoint = getDataPoint(xid);
+			if(dataPoint != null)
+				pointIds.add(dataPoint);
+			else
+				LOG.warn("datapoint does not exist for xid: " + xid);
 		}
 		return pointIds;
 	}
 
-	private List<Integer> getDataPointIdsByXid(String pointString) {
-		List<Integer> pointIds = new ArrayList<>();
-		for(String xid: pointString.split(",")) {
-			pointIds.add(getDataPoint(xid).getId());
-		}
-		return pointIds;
-	}
-
-	private List<PointValueAmChartDAO.DataPointSimpleValue> aggregateValuesFromRange(long startTs, long endTs, List<Integer> pointIds) {
-		int limit = getNumberOfValuesLimit();
-		List<PointValueAmChartDAO.DataPointSimpleValue> pvcList = pointValueAmChartDao.getPointValuesFromRangeWithLimit(pointIds.stream().mapToInt(i -> i).toArray(), startTs, endTs, limit + 1);
+	private List<PointValueAmChartDAO.DataPointSimpleValue> aggregateValuesFromRange(long startTs, long endTs,
+																					 List<DataPointVO> pointIds,
+																					 AggregateSettings aggregateSettings) {
+		int limit = aggregateSettings.getValuesLimit();
+		List<PointValueAmChartDAO.DataPointSimpleValue> pvcList = pointValueAmChartDao
+				.getPointValuesFromRangeWithLimit(getPointIds(pointIds), startTs, endTs, limit + 1);
 		if (pvcList.size() > limit) {
 			pvcList.clear();
-			return aggregateSortValues(startTs, endTs, pointIds, limit);
+			long intervalMs = calculateIntervalMs(startTs, endTs, pointIds.size(), aggregateSettings);
+			return aggregateSortValues(startTs, endTs, pointIds, limit, intervalMs);
 		}
 		return pvcList;
 	}
 
-	private List<PointValueAmChartDAO.DataPointSimpleValue> aggregateSortValues(long startTs, long endTs, List<Integer> pointIds, int limit) {
-		long intervalMs = calculateIntervalMs(startTs, endTs, pointIds.size());
-		return getDataPoints(pointIds).stream()
+	private int[] getPointIds(List<DataPointVO> pointIds) {
+		return pointIds.stream().mapToInt(DataPointVO::getId).toArray();
+	}
+
+	private List<PointValueAmChartDAO.DataPointSimpleValue> aggregateSortValues(long startTs, long endTs,
+																				List<DataPointVO> dataPoints,
+																				int limit, long intervalMs) {
+		return dataPoints.stream()
 				.flatMap(dataPoint -> pointValueAmChartDao.aggregatePointValues(dataPoint, startTs, endTs, intervalMs, limit).stream())
 				.sorted(Comparator.comparingLong(PointValueAmChartDAO.DataPointSimpleValue::getTimestamp))
 				.collect(Collectors.toList());
 	}
 
-    private Optional<DataPointVO> getDataPointOpt(Integer a) {
-        if(a == null)
-            return Optional.empty();
-        DataPointRT dataPointRT = Common.ctx.getRuntimeManager().getDataPoint(a);
-        if(dataPointRT == null) {
-            try {
-                return Optional.ofNullable(getDataPoint(a));
-            } catch (Exception ex) {
-                LOG.error(ex.getMessage());
-                return Optional.empty();
-            }
-        }
-        return Optional.ofNullable(dataPointRT.getVO());
-    }
+	private Optional<DataPointVO> getDataPointOpt(Integer a) {
+		if(a == null)
+			return Optional.empty();
+		try {
+			return Optional.ofNullable(getDataPoint(a));
+		} catch (Exception ex) {
+			LOG.error(ex.getMessage());
+			return Optional.empty();
+		}
+	}
 }

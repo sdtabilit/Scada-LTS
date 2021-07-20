@@ -5,11 +5,11 @@ import com.serotonin.mango.vo.DataPointVO;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.scada_lts.dao.DAO;
-import org.scada_lts.dao.DataPointDAO;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -99,7 +99,12 @@ public class PointValueAmChartDAO {
     public List<DataPointSimpleValue> aggregatePointValues(DataPointVO dataPoint, long startTs, long endTs,
                                                            long intervalMs, int limit) {
 
-        if(dataPoint == null || dataPoint.getPointLocator() == null) {
+        if(dataPoint == null) {
+            LOG.warn("dataPoint is null!");
+            return Collections.emptyList();
+        }
+        if(dataPoint.getPointLocator() == null) {
+            LOG.warn(dataPointInfo(dataPoint));
             return Collections.emptyList();
         }
         QueryArgs aggregationQuery = toAggregationQuery(dataPoint.getId(), dataPoint.getPointLocator().getDataTypeId(), startTs, endTs, intervalMs, limit);
@@ -294,5 +299,9 @@ public class PointValueAmChartDAO {
         public Object[] getArgs() {
             return args;
         }
+    }
+
+    public static String dataPointInfo(DataPointVO dataPoint) {
+        return MessageFormat.format("PointLocator is null for dataPoint: {0} (id: {1}, xid: {2}, dataSource: {3} (id:{4}))", dataPoint.getName(), dataPoint.getId(), dataPoint.getXid(), dataPoint.getDataSourceName(), dataPoint.getDataSourceId());
     }
 }

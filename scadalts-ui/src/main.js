@@ -217,6 +217,8 @@ for (let x = 0; x < 10; x++) {
 						showBullets: el.getAttribute('show-bullets') !== null,
 						showExportMenu: el.getAttribute('show-export-menu') !== null,
 						smoothLine: Number(el.getAttribute('smooth-line')),
+						serverValuesLimit: Number(el.getAttribute('server-values-limit')),
+						serverLimitFactor: Number(el.getAttribute('server-limit-factor')),
 					},
 				}),
 		}).$mount(`#${chartId}`);
@@ -245,6 +247,8 @@ for (let x = 0; x < 10; x++) {
 						width: el.getAttribute('width') !== null ? el.getAttribute('width') : '500',
 						height: el.getAttribute('height') !== null ? el.getAttribute('height') : '400',
 						color: el.getAttribute('color'),
+						serverValuesLimit: Number(el.getAttribute('server-values-limit')),
+						serverLimitFactor: Number(el.getAttribute('server-limit-factor')),
 					},
 				}),
 		}).$mount(`#${chartId}`);

@@ -51,6 +51,8 @@ export default {
 		showBullets: { type: Boolean },
 		showExportMenu: { type: String },
 		smoothLine: { type: Number },
+		serverValuesLimit: { type: Number },
+		serverLimitFactor: { type: Number }
 	},
 
 	data() {
@@ -78,6 +80,9 @@ export default {
 
 			if (!!this.useXid) {
 				this.chartClass.xid();
+			}
+			if(!!this.serverValuesLimit) {
+				this.chartClass.setApiAggregation(this.serverValuesLimit, this.serverLimitFactor);
 			}
 			if(!!this.separateAxis) {
 				this.chartClass.separateAxis();
