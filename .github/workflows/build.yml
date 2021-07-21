@@ -29,6 +29,17 @@ jobs:
         run: ant -noinput -buildfile build.xml build-no-ui-skip-test
       - name: JUnit Scada Application with Ant
         run: ant -noinput -buildfile build.xml test-junit
+      - name: Show JUnit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: always()
+        with:
+          check_name: Java JUnit Test Results
+          files: ./build/test-reports/**/*.xml
+      - name: Publish JUnit Test Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: junit-java-test-results
+          path: ./build/test-reports/
       - name: Cache Scada-LTS application
         uses: actions/cache@v2
         with:
@@ -52,12 +63,23 @@ jobs:
       - name: Install dependencies
         working-directory: ./scadalts-ui
         run: npm install
-#      - name: Run Frontend UnitTests
-#        working-directory: ./scadalts-ui
-#        run: npm run-script test:unit
+      - name: Run Frontend UnitTests
+        working-directory: ./scadalts-ui
+        run: npm run-script test:unit
+      - name: Show Mocha Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: always()
+        with:
+          check_name: Java Script Mocha Unit Test Results
+          files: ./scadalts-ui/test-results.xml
+      - name: Publish Mocha Test Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: mocha-js-test-results
+          path: ./scadalts-ui/test-results.xml
       - name: Prepare Application Vairables
         working-directory: ./scadalts-ui
-        run: npm run-script build-config -- 2.6.0 $GITHUB_RUN_ID $GITHUB_HEAD_REF $GITHUB_SHA $GITHUB_ACTOR $GITHUB_BASE_REF
+        run: npm run-script build-config -- 2.7.0 $GITHUB_RUN_ID $GITHUB_HEAD_REF $GITHUB_SHA $GITHUB_ACTOR $GITHUB_BASE_REF
       - name: Build User Interface
         working-directory: ./scadalts-ui
         run: npm run-script build

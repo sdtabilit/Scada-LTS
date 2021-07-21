@@ -10,6 +10,7 @@
 	<property name="build-project.dir" value="build/"/>
 	<property name="build-project.src.dir" value="${build-project.dir}classes/"/>
 	<property name="build-project.test.dir" value="${build-project.dir}test-classes/"/>
+	<property name="build-project.test.report" value="${build-project.dir}test-reports/"/>
 	<property name="build-project.log.dir" value="${build-project.dir}log/"/>
 	<property name="build-project.log.src.name" value="${build-project.log.dir}javac-src.log"/>
 	<property name="build-project.log.test.name" value="${build-project.log.dir}javac-test.log"/>
@@ -94,9 +95,12 @@
 
 	<target name="test-junit" description="Test Scada-LTS core application" depends="build-core">
 		<record action="start" name="${junit.log.name}"/>
+		<mkdir dir="${build-project.test.report}"/>
+
 		<junit printsummary="yes" haltonfailure="no">
 
 			<formatter type="plain" usefile="false" />
+			<formatter type="xml"/>
 
 			<classpath refid="scada-lts.classpath" />
 			<classpath location="${build-project.test.dir}" />
@@ -138,87 +142,87 @@
             </test>
             -->
 			<test name="org.scada_lts.cached.DataPointsCacheComposeDataSourcesDataTest"
-				  haltonfailure="yes">
+				  haltonfailure="yes" todir="${build-project.test.report}">
 			</test>
 
 			<test name="org.scada_lts.cached.DataSourcePointsCacheMockitoTest"
-				  haltonfailure="yes">
+				  haltonfailure="yes" todir="${build-project.test.report}">
 			</test>
 
 			<test name="com.serotonin.mango.rt.dataImage.PointValueCacheTest"
-				  haltonfailure="yes">
+				  haltonfailure="yes" todir="${build-project.test.report}">
 			</test>
 
 			<test name="com.serotonin.mango.rt.dataImage.PointValueFacadeTest"
-				  haltonfailure="yes">
+				  haltonfailure="yes" todir="${build-project.test.report}">
 			</test>
 
 			<test name="com.serotonin.mango.web.dwr.DataPointDetailsDwrTest"
-				  haltonfailure="yes">
+				  haltonfailure="yes" todir="${build-project.test.report}">
 			</test>
 
 			<test name="com.serotonin.mango.rt.dataImage.PointValueTimeTest"
-				  haltonfailure="yes">
+				  haltonfailure="yes" todir="${build-project.test.report}">
 			</test>
 
 			<test name="com.serotonin.mango.rt.dataImage.AnnotatedPointValueTimeTest"
-				  haltonfailure="yes">
+				  haltonfailure="yes" todir="${build-project.test.report}">
 			</test>
 
 			<test name="org.scada_lts.dao.PointValueDAOTest"
-				  haltonfailure="yes">
+				  haltonfailure="yes" todir="${build-project.test.report}">
 			</test>
 
 			<test name="com.serotonin.mango.view.component.ViewComponentTestsSuite"
-				  haltonfailure="yes">
+				  haltonfailure="yes" todir="${build-project.test.report}">
 			</test>
 
 			<test name="com.serotonin.mango.rt.dataSource.meta.ScriptExecutorTest"
-				  haltonfailure="yes">
+				  haltonfailure="yes" todir="${build-project.test.report}">
 			</test>
 
 			<test name="com.serotonin.mango.rt.scripting.ContextualizedScriptRTTestsSuite"
-				  haltonfailure="yes">
+				  haltonfailure="yes" todir="${build-project.test.report}">
 			</test>
 
 			<test name="org.scada_lts.service.ScheduledExecuteInactiveEventServiceTest"
-				  haltonfailure="yes">
+				  haltonfailure="yes" todir="${build-project.test.report}">
 			</test>
 
 			<test name="com.serotonin.mango.vo.mailingList.MailingListInactive15MinuteIntervalTestsSuite"
-				  haltonfailure="yes">
+				  haltonfailure="yes" todir="${build-project.test.report}">
 			</test>
 
 			<test name="com.serotonin.mango.rt.event.handlers.EmailToSmsHandlerRtTest"
-				  haltonfailure="yes">
+				  haltonfailure="yes" todir="${build-project.test.report}">
 			</test>
 
 			<test name="org.scada_lts.service.CommunicationChannelTest"
-				  haltonfailure="yes">
+				  haltonfailure="yes" todir="${build-project.test.report}">
 			</test>
 
 			<test name="com.serotonin.mango.rt.event.ScheduledExecuteInactiveEventRtTestsSuite"
-				  haltonfailure="yes">
+				  haltonfailure="yes" todir="${build-project.test.report}">
 			</test>
 
 			<test name="org.scada_lts.service.InactiveEventsProviderTest"
-				  haltonfailure="yes">
+				  haltonfailure="yes" todir="${build-project.test.report}">
 			</test>
 
 			<test name="org.scada_lts.utils.UpdateValuePointPropertiesTest"
-				  haltonfailure="yes">
+				  haltonfailure="yes" todir="${build-project.test.report}">
 			</test>
 
 			<test name="org.scada_lts.permissions.service.util.PermissionsTestsSuite"
-				  haltonfailure="yes">
+				  haltonfailure="yes" todir="${build-project.test.report}">
 			</test>
 
 			<test name="com.serotonin.mango.util.ViewControllerUtilsTest"
-				  haltonfailure="yes">
+				  haltonfailure="yes" todir="${build-project.test.report}">
 			</test>
 
 			<test name="org.scada_lts.permissions.migration.MigrationPermissionsTestsSuite"
-				  haltonfailure="yes">
+				  haltonfailure="yes" todir="${build-project.test.report}">
 			</test>
 
 			<test name="org.scada_lts.dao.pointvalues.PointValueAmChartDAOTest"
@@ -229,6 +233,12 @@
 				  haltonfailure="yes">
 			</test>
 		</junit>
+
+		<junitreport todir="${build-project.test.report}">
+			<fileset dir="${build-project.test.report}">
+				<include name="TEST-*.xml"/>
+			</fileset>
+		</junitreport>
 		<record action="stop" name="${junit.log.name}"/>
 
 	</target>

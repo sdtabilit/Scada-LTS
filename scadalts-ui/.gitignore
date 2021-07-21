@@ -17,6 +17,8 @@ yarn-debug.log*
 yarn-error.log*
 
 package-lock.json
+test-results.xml
+
 
 # Editor directories and files
 .idea
