@@ -42,6 +42,8 @@ import com.serotonin.mango.vo.link.PointLinkVO;
 import com.serotonin.util.StringUtils;
 import com.serotonin.web.i18n.LocalizableMessage;
 
+import static com.serotonin.mango.util.LoggingScriptUtils.infoErrorExecutionScript;
+
 /**
  * @author Matthew Lohbihler
  */
@@ -158,10 +160,15 @@ public class PointLinkRT implements DataPointListener, PointLinkSetPointSource {
 			} catch (ScriptException e) {
 				raiseFailureEvent(newValue.getTime(), new LocalizableMessage(
 						"common.default", e.getMessage()));
+				LOG.error(infoErrorExecutionScript(e, vo, targetPoint, source));
 				return;
 			} catch (ResultTypeException e) {
 				raiseFailureEvent(newValue.getTime(), e.getLocalizableMessage());
+				LOG.error(infoErrorExecutionScript(e, vo, targetPoint, source));
 				return;
+			} catch (Exception e) {
+				LOG.error(infoErrorExecutionScript(e, vo, targetPoint, source));
+				throw e;
 			}
 		}
 

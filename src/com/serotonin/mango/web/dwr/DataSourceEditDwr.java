@@ -43,6 +43,7 @@ import javax.management.remote.JMXServiceURL;
 import javax.script.ScriptException;
 
 import br.org.scadabr.db.dao.UsersProfileDao;
+import com.serotonin.mango.util.LoggingScriptUtils;
 import net.sf.mbus4j.Connection;
 import net.sf.mbus4j.MBusAddressing;
 import net.sf.mbus4j.TcpIpConnection;
@@ -215,6 +216,8 @@ import com.serotonin.web.dwr.MethodFilter;
 import com.serotonin.web.i18n.LocalizableException;
 import com.serotonin.web.i18n.LocalizableMessage;
 import com.serotonin.web.taglib.DateFunctions;
+
+import static com.serotonin.mango.util.LoggingScriptUtils.infoErrorExecutionScript;
 
 /**
  * @author Matthew Lohbihler
@@ -1116,6 +1119,9 @@ public class DataSourceEditDwr extends DataSourceListDwr {
                     "dsEdit.meta.test.scriptError", e.getMessage());
         } catch (ResultTypeException e) {
             response.addMessage("script", e.getLocalizableMessage());
+        } catch (Exception e) {
+            LOG.error(infoErrorExecutionScript(e,"validateScript"));
+            throw e;
         }
 
         return response;

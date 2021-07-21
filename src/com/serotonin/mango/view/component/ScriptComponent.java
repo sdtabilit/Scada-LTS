@@ -25,6 +25,8 @@ import java.util.Map;
 
 import javax.script.ScriptException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
@@ -39,6 +41,9 @@ import com.serotonin.mango.vo.DataPointVO;
 import com.serotonin.mango.web.dwr.BaseDwr;
 import com.serotonin.mango.web.taglib.Functions;
 import com.serotonin.util.SerializationHelper;
+import org.mozilla.javascript.Undefined;
+
+import static com.serotonin.mango.util.LoggingScriptUtils.infoErrorExecutionScript;
 
 /**
  * @author Matthew Lohbihler
@@ -53,6 +58,8 @@ public class ScriptComponent extends PointComponent {
 
 	@JsonRemoteProperty
 	private String script;
+
+	private static final Log LOG = LogFactory.getLog(ScriptComponent.class);
 
 	@Override
 	public String snippetName() {
@@ -115,8 +122,13 @@ public class ScriptComponent extends PointComponent {
 						result = null;
 					else
 						result = o.toString();
+
+					if(o instanceof Undefined) {
+						LOG.error(infoErrorExecutionScript(model, this));
+					}
 				} catch (Exception e) {
 					result = ScriptExecutor.prettyScriptMessage(new ScriptException(e)).getMessage();
+					LOG.error(infoErrorExecutionScript(e, model, this));
 				}
 			} finally {
 				Context.exit();

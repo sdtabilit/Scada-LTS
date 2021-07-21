@@ -27,6 +27,9 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.serotonin.mango.util.LoggingScriptUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 
@@ -90,6 +93,10 @@ import com.serotonin.web.dwr.MethodFilter;
 import org.scada_lts.mango.service.UserService;
 import org.scada_lts.permissions.service.GetObjectsWithAccess;
 import org.scada_lts.permissions.service.GetViewsWithAccess;
+import org.scada_lts.dao.model.ScadaObjectIdentifier;
+
+
+import static com.serotonin.mango.util.LoggingScriptUtils.infoErrorExecutionScript;
 
 import static com.serotonin.mango.web.dwr.util.AnonymousUserUtils.getUser;
 
@@ -107,6 +114,8 @@ public class ViewDwr extends BaseDwr {
 	// /
 	//
 	//
+	private static final Log LOG = LogFactory.getLog(ViewDwr.class);
+
 	public List<ViewComponentState> getViewPointDataAnon(int viewId) {
 		View view = Common.getAnonymousView(viewId);
 		if (view == null)
@@ -237,7 +246,7 @@ public class ViewDwr extends BaseDwr {
 			DataPointRT dataPointRT = null;
 			if (pointComponent.tgetDataPoint() != null)
 				dataPointRT = rtm.getDataPoint(pointComponent.tgetDataPoint().getId());
-
+			model.put(LoggingScriptUtils.VIEW_IDENTIFIER, new ScadaObjectIdentifier(view.getId(), view.getXid(), view.getName()));
 			ViewComponentState state = preparePointComponentState(pointComponent, user, dataPointRT, model, request);
 
 			if (!edit) {
@@ -266,8 +275,9 @@ public class ViewDwr extends BaseDwr {
 		ViewComponentState state = new ViewComponentState();
 		state.setId(pointComponent.getId());
 
+		Object identifier = model.get(LoggingScriptUtils.VIEW_IDENTIFIER);
 		PointValueTime pointValue = prepareBasePointState(pointComponent.getId(), state, pointComponent.tgetDataPoint(), point, model);
-
+		model.put(LoggingScriptUtils.VIEW_IDENTIFIER, identifier);
 		model.put("pointComponent", pointComponent);
 		if (pointComponent.isValid())
 			setEvents(pointComponent.tgetDataPoint(), user, model);
@@ -957,7 +967,7 @@ public class ViewDwr extends BaseDwr {
 			} else
 				return false;
 		} catch (Exception e) {
-			e.printStackTrace();
+		    LOG.error(infoErrorExecutionScript(e, script), e);
 		}
 
 		return false;
