@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import static com.serotonin.mango.util.SendMsgUtils.getDataPointMessage;
+
 public final class EmailContentUtils {
 
     private EmailContentUtils(){}
@@ -74,14 +76,22 @@ public final class EmailContentUtils {
         if(evt.getEventType() instanceof DataPointEventType) {
             Map<String, Object> context = evt.getContext();
             DataPointVO dataPoint = (DataPointVO) context.get("point");
-            if(isDataPointName(context, dataPoint) && isPlcAlarm(dataPoint) && evt.getMessage() != null) {
-                LocalizableMessage subjectMsg;
-                if (notificationType instanceof EmailToSmsHandlerRT.SmsNotificationType) {
-                    subjectMsg = evt.getShortMessage();
+            if(isDataPointName(context, dataPoint) && evt.getMessage() != null) {
+                if (isPlcAlarm(dataPoint)) {
+                    LocalizableMessage subjectMsg;
+                    if (notificationType instanceof EmailToSmsHandlerRT.SmsNotificationType) {
+                        subjectMsg = evt.getShortMessage();
+                    } else {
+                        subjectMsg = evt.getMessage();
+                    }
+                    return evt.getPrettyActiveTimestamp() + " - " + subjectMsg.getLocalizedMessage(bundle);
                 } else {
-                    subjectMsg = evt.getMessage();
+                    LocalizableMessage subjectMsg;
+                    LocalizableMessage notifTypeMsg = new LocalizableMessage(notificationType.getKey());
+                    subjectMsg = new LocalizableMessage("ftl.subject.default", evt.getPrettyActiveTimestamp(),
+                            AlarmLevels.CODES.getCode(evt.getAlarmLevel()).toUpperCase(), getDataPointMessage(dataPoint), notifTypeMsg);
+                    return subjectMsg.getLocalizedMessage(bundle);
                 }
-                return evt.getPrettyActiveTimestamp() + " - "  + subjectMsg.getLocalizedMessage(bundle);
             }
         }
 
@@ -89,15 +99,10 @@ public final class EmailContentUtils {
         LocalizableMessage subjectMsg;
         LocalizableMessage notifTypeMsg = new LocalizableMessage(notificationType.getKey());
         if (StringUtils.isEmpty(alias)) {
-            if (evt.getId() == Common.NEW_ID)
-                subjectMsg = new LocalizableMessage("ftl.subject.default", notifTypeMsg);
-            else
-                subjectMsg = new LocalizableMessage("ftl.subject.default.id", notifTypeMsg, evt.getId());
+            subjectMsg = new LocalizableMessage("ftl.subject.default", evt.getPrettyActiveTimestamp(),
+                    AlarmLevels.CODES.getCode(evt.getAlarmLevel()).toUpperCase(), "", notifTypeMsg);
         } else {
-            if (evt.getId() == Common.NEW_ID)
-                subjectMsg = new LocalizableMessage("ftl.subject.alias", alias, notifTypeMsg);
-            else
-                subjectMsg = new LocalizableMessage("ftl.subject.alias.id", alias, notifTypeMsg, evt.getId());
+            subjectMsg = new LocalizableMessage("ftl.subject.alias", alias, notifTypeMsg);
         }
 
         return subjectMsg.getLocalizedMessage(bundle);

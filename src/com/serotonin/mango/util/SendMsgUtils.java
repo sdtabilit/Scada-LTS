@@ -1,6 +1,7 @@
 package com.serotonin.mango.util;
 
 import com.serotonin.mango.Common;
+import com.serotonin.mango.rt.dataImage.DataPointRT;
 import com.serotonin.mango.rt.event.EventInstance;
 import com.serotonin.mango.rt.event.handlers.EmailHandlerRT;
 import com.serotonin.mango.rt.event.handlers.EmailToSmsHandlerRT;
@@ -9,6 +10,8 @@ import com.serotonin.mango.rt.event.type.SystemEventType;
 import com.serotonin.mango.rt.maint.work.AfterWork;
 import com.serotonin.mango.rt.maint.work.EmailWorkItem;
 import com.serotonin.mango.rt.maint.work.EmailNotificationWorkItem;
+import com.serotonin.mango.view.event.NoneEventRenderer;
+import com.serotonin.mango.vo.DataPointVO;
 import com.serotonin.mango.web.email.MangoEmailContent;
 import com.serotonin.util.StringUtils;
 import com.serotonin.web.i18n.LocalizableMessage;
@@ -156,7 +159,7 @@ public final class SendMsgUtils {
 
         String messageInfoAlias = MessageFormat.format("Alias: {0} \n", alias);
         String messageInfoEmail = MessageFormat.format("Event: {0} \n", evt.getId());
-        String messageInfoNotyfication = MessageFormat.format("Notyfication: {0} \n", notificationType.getKey());
+        String messageInfoNotification = MessageFormat.format("Notification: {0} \n", notificationType.getKey());
         String subject = "";
         String messageExceptionWhenGetSubjectEmail = "";
         try {
@@ -164,7 +167,7 @@ public final class SendMsgUtils {
             LocalizableMessage notifTypeMsg = new LocalizableMessage(notificationType.getKey());
             if (StringUtils.isEmpty(alias)) {
                 if (evt.getId() == Common.NEW_ID)
-                    subjectMsg = new LocalizableMessage("ftl.subject.default", notifTypeMsg);
+                    subjectMsg = new LocalizableMessage("ftl.subject.default.log", notifTypeMsg);
                 else
                     subjectMsg = new LocalizableMessage("ftl.subject.default.id", notifTypeMsg, evt.getId());
             } else {
@@ -182,7 +185,7 @@ public final class SendMsgUtils {
 
         String messages = new StringBuilder()
                 .append(messageInfoEmail)
-                .append(messageInfoNotyfication)
+                .append(messageInfoNotification)
                 .append(messageInfoAlias)
                 .append(subject)
                 .append(messageExceptionWhenGetSubjectEmail).toString();
@@ -231,5 +234,19 @@ public final class SendMsgUtils {
             }
         }
         return addresses.toArray(new InternetAddress[]{});
+    }
+
+    public static String getDataPointMessage(DataPointVO dataPoint) {
+        DataPointRT point = Common.ctx.getRuntimeManager().getDataPoint(dataPoint.getId());
+        if (dataPoint.getEventTextRenderer() != null &&
+                !dataPoint.getEventTextRenderer().getTypeName().equals(NoneEventRenderer.TYPE_NAME) &&
+                dataPoint.getEventTextRenderer().getText(point.getPointValue().getValue()) != null &&
+                (!dataPoint.getEventTextRenderer().getText(point.getPointValue().getValue()).equals(""))) {
+            return " " + dataPoint.getEventTextRenderer().getText(point.getPointValue().getValue());
+        }
+        else if (dataPoint.getDescription() != null && !dataPoint.getDescription().equals(""))
+            return " " + dataPoint.getDescription();
+        else
+            return " " + dataPoint.getName();
     }
 }
