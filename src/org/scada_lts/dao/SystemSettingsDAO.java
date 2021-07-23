@@ -21,7 +21,9 @@ import com.serotonin.InvalidArgumentException;
 import com.serotonin.ShouldNeverHappenException;
 import com.serotonin.mango.Common;
 import com.serotonin.mango.vo.DataPointVO;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.scada_lts.utils.ColorUtils;
+import org.scada_lts.web.mvc.api.AggregateSettings;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -108,6 +110,11 @@ public class SystemSettingsDAO {
 
 	// SMS domain
 	public static final String SMS_DOMAIN = "sms.domain";
+
+	// Aggregation values
+	public static final String AGGREGATION_ENABLED = "aggregationEnabled";
+	public static final String AGGREGATION_VALUES_LIMIT = "aggregationValuesLimit";
+	public static final String AGGREGATION_LIMIT_FACTOR = "aggregationLimitFactor";
 
 	private static final String DELETE_WATCH_LISTS = "delete from watchLists";
 	private static final String DELETE_MANGO_VIEWS = "delete from mangoViews";
@@ -214,6 +221,13 @@ public class SystemSettingsDAO {
 		if (value == null)
 			return defaultValue;
 		return DAO.charToBool(value);
+	}
+
+	public static boolean getBooleanValueOrDefault(String key) {
+		String value = getValue(key, null);
+		if (value == null)
+			return Boolean.parseBoolean(String.valueOf(DEFAULT_VALUES.get(key)));
+		return Boolean.parseBoolean(value);
 	}
 
 	public void setValue(final String key, final String value) {
@@ -346,6 +360,11 @@ public class SystemSettingsDAO {
 
 		DEFAULT_VALUES.put(DEFAULT_LOGGING_TYPE, DataPointVO.LoggingTypes.ON_CHANGE);
 		DEFAULT_VALUES.put(SMS_DOMAIN, "localhost");
+
+		AggregateSettings aggregateSettings = AggregateSettings.fromEnvProperties();
+		DEFAULT_VALUES.put(AGGREGATION_ENABLED, aggregateSettings.isEnabled());
+		DEFAULT_VALUES.put(AGGREGATION_LIMIT_FACTOR, String.valueOf(aggregateSettings.getLimitFactor()));
+		DEFAULT_VALUES.put(AGGREGATION_VALUES_LIMIT, aggregateSettings.getValuesLimit());
 	}
 
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED, rollbackFor = SQLException.class)

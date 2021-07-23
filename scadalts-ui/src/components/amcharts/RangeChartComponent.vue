@@ -158,6 +158,8 @@ export default {
 		showBullets: { type: Boolean },
 		showExportMenu: { type: String },
 		smoothLine: { type: Number },
+		serverValuesLimit: { type: Number },
+		serverLimitFactor: { type: Number }
 	},
 
 	data() {
@@ -185,6 +187,10 @@ export default {
 				.setStrokeWidth(this.strokeWidth)
 				.showScrollbar()
 				.showLegend();
+
+			if(!!this.serverValuesLimit) {
+				this.chartClass.setApiAggregation(this.serverValuesLimit, this.serverLimitFactor);
+			}
 
 			if (!!this.useXid) {
 				this.chartClass.xid();

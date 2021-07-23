@@ -131,6 +131,17 @@ To generate multiple charts on View page just use unique identifiers.
 
 ![Multiple Charts](../../assets/doc/watch_list/MWL_CompareCharts.gif)
 
+### Aggregation
+To increase the performance of the AmCharts there are two different approches. The first one is the build-in basic chart point aggregation. 
+It limit the data displayed on the AmChart based on the **"aggregation"**
+parameter provided with chart. This settings reduce the rendered data on
+a user browser.
+
+Second approach is related with Server-side aggregation. User can define the
+data count limit using **"server-values-limit"** parameter. This settings
+in ideal situation describe the amount of values that are distributed evenly on a timeline. But in real life some values are genereated at the same time or the gap between them can vary so the "ideal" situation with evenly distributed vales is almost imposible. So to fix that there is an **"server-limit-factor"** parameter that helps to achive the more reliable chart. Increasing that factor, we divide the interval into smaller blocks, so the data presenation is more accurate. There are more of this aggregated groups, but in each there are fewer values and averages to calculate.
+If from specific range there are less values than **"server-values-limit"** define that mechanism will be disabled. It tries to get the most accurate graph. AmChart works well with less than 30 000 of data point values on a single chart, so try to set up your graph to not exceed that constraint. 
+
 ## Modern Chart documentation:
 
 Available properties in one place for all chart types. Charts could be exported to external file in graphical or text way. You can export to _.png, _.jpg, _.csv, _.json files.
@@ -156,7 +167,8 @@ Properties properties for Line charts
 | show-bullets | Boolean | show-bullets |
 | show-export-menu | Boolean | show-export-menu |
 | smooth-line | Number [0-1] | smooth-line="0.75" |
-
+| server-values-limit | Number | server-values-limit="10000" |
+| server-limit-factor | Number | server-limit-factor="1.5" |
 
 # Author
 

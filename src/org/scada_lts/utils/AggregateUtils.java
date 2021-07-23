@@ -2,6 +2,7 @@ package org.scada_lts.utils;
 
 import org.apache.commons.logging.LogFactory;
 import org.scada_lts.config.ScadaConfig;
+import org.scada_lts.web.mvc.api.AggregateSettings;
 
 public final class AggregateUtils {
 
@@ -14,13 +15,13 @@ public final class AggregateUtils {
 
     private AggregateUtils() {}
 
-    public static long calculateIntervalMs(long startTs, long endTs, int numberOfPoints) {
+    public static long calculateIntervalMs(long startTs, long endTs, int numberOfPoints, AggregateSettings aggregateSettings) {
         if(numberOfPoints == 0)
-            return calculate(startTs, endTs, 1);
-        return calculate(startTs, endTs, numberOfPoints);
+            return calculate(startTs, endTs, 1, aggregateSettings);
+        return calculate(startTs, endTs, numberOfPoints, aggregateSettings);
     }
 
-    public static boolean withAggregation() {
+    public static boolean isEnabled() {
         try {
             return ScadaConfig.getInstance().getBoolean(API_AMCHARTS_AGGREGATION_ENABLED_KEY, false);
         } catch (Exception e) {
@@ -29,12 +30,7 @@ public final class AggregateUtils {
         }
     }
 
-    private static long calculate(long startTs, long endTs, int numberOfPoints) {
-        long result = Math.round((endTs - startTs)/(getNumberOfValuesLimit() * getLimitFactor()/numberOfPoints));
-        return result == 0 ? 1 : result;
-    }
-
-    public static int getNumberOfValuesLimit() {
+    public static int getValuesLimit() {
         try {
             return ScadaConfig.getInstance().getInt(API_AMCHARTS_AGGREGATION_VALUES_LIMIT_KEY, NUMBER_OF_VALUES_LIMIT_DEFAULT);
         } catch (Exception e) {
@@ -50,5 +46,10 @@ public final class AggregateUtils {
             LOG.error(e.getMessage());
             return 1;
         }
+    }
+
+    private static long calculate(long startTs, long endTs, int numberOfPoints, AggregateSettings aggregateSettings) {
+        long result = Math.round((endTs - startTs)/(aggregateSettings.getValuesLimit() * aggregateSettings.getLimitFactor()/numberOfPoints));
+        return result == 0 ? 1 : result;
     }
 }

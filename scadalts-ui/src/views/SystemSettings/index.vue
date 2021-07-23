@@ -47,6 +47,10 @@
 									ref="smsDomainSettingsComponent"
 									@changed="componentChanged"
 								></SmsDomainSettingsComponent>
+								<AmChartSettingsComponent
+									ref="amChartSettingsComponent"
+									@changed="componentChanged"
+								></AmChartSettingsComponent>
 								<ScadaConfigurationComponent></ScadaConfigurationComponent>
 							</v-row>
 						</v-col>
@@ -326,6 +330,7 @@ import MiscSettingsComponent from './MiscSettingsComponent';
 import DefaultLoggingTypeSettingsComponent from './DefaultLoggingTypeComponent';
 import SmsDomainSettingsComponent from './SmsDomainSettingsComponent';
 import ScadaConfigurationComponent from './ScadaConfigurationComponent';
+import AmChartSettingsComponent from './AmChartSettingsComponent';
 
 export default {
 	el: '#systemsettings',
@@ -340,6 +345,7 @@ export default {
 		DefaultLoggingTypeSettingsComponent,
 		SmsDomainSettingsComponent,
 		ScadaConfigurationComponent,
+		AmChartSettingsComponent,
 	},
 	filters: {
 		blank: function (value) {
